@@ -115,10 +115,30 @@ That's it!
 
 ### Deployment
 
+The deployment process involves uploading another project, via git, to your Elements Application repo. The deployment repo must follow a specific structure. We've included an element-example-deployment folder with an example structure. See [Packaging an Element](https://manual.getelements.dev/core-features/custom-code/element-structure#packaging-an-element) in the manual for more details.
+
+1) While running the Elements Docker containers locally, navigate to http://localhost:8080/admin/login in a browser. 
+2) Create a new Application using either the Elements UI.
+3) Go to Edit for newly created Application.
+4) Copy the Script Repo URL.
+5) Either clone this project to a new folder, or add a new git remote to an existing git project deployment folder.
+   * You might need to add your SUPERUSER credentials to your git config or to the remote URL directly (e.g. `http://username:password@localhost:8080/code/git/ApplicationName`).
+6) Now you can move your deployment to the deployment project:
+   * Move your classes to `classpath` or just move the jar file (that was created with `mvn install`, e.g. target/ElementSample-1.0-SNAPSHOT.jar) to the `lib` folder.
+7) Use git push [remote name] [local branch]:[remote branch]. 
+   * For example `git push local main:main`. `git push -f` may be needed the first time.
+8) Restarting the containers might be necessary if your version of Elements does not include hot code loading.
+9) Deployment done! Repeat steps 6-8 for any future deployments/updates.
+   * This is mostly the same process that you'd use for any Elements deployment target, so you can set up different remotes for each environment if you want to be able to deploy everywhere from one place, e.g. `git push dev` `git push staging` `git push prod`
+
+
+
 > [!Warning]
 > When Elements is run for the first time, it creates a new User with SUPERUSER privileges with the username `root` and password `example`. It is recommended to use this to create another more secure SUPERUSER account, then use that account to delete the root account.
 
 
 ### Testing Remotely
 
+With the code now deployed, your Element is now available for remote testing! 
 
+Try out GET http://localhost:8080/api/rest/application/Test/helloworld
