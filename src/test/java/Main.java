@@ -10,6 +10,9 @@ public class Main {
                 .withElementNamed("example", "com.mystudio.mygame")
                 .build();
 
+        // The Data Access Object (DAO) pattern is a structural pattern that allows us to isolate the
+        // application/business layer from the persistence layer using an abstract API. Basically, a wrapper
+        // for the database.
         final var dao = local.getRootElementRegistry()
                 .find("dev.getelements.elements.sdk.dao")
                 .findFirst()

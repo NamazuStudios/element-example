@@ -1,5 +1,6 @@
-package com.mystudio.mygame.rest;
+package com.mystudio.mygame;
 
+import com.mystudio.mygame.rest.HelloWorld;
 import dev.getelements.elements.sdk.annotation.ElementServiceExport;
 import dev.getelements.elements.sdk.annotation.ElementServiceImplementation;
 import jakarta.ws.rs.core.Application;

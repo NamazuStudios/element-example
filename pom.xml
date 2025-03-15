@@ -13,23 +13,20 @@
             <id>elements-release</id>
             <url>https://getelements.jfrog.io/artifactory/elements-libs-release</url>
         </repository>
-        <repository>
-            <id>elements-snapshot</id>
-            <url>https://getelements.jfrog.io/artifactory/elements-libs-snapshot</url>
-        </repository>
     </repositories>
 
     <dependencies>
         <dependency>
             <groupId>dev.getelements.elements</groupId>
             <artifactId>sdk-local</artifactId>
-            <version>3.0.0-SNAPSHOT</version>
+            <version>${elements.version}</version>
         </dependency>
         <dependency>
             <groupId>dev.getelements.elements</groupId>
             <artifactId>sdk</artifactId>
-            <version>3.0.0-SNAPSHOT</version>
+            <version>${elements.version}</version>
         </dependency>
+
         <dependency>
             <groupId>jakarta.ws.rs</groupId>
             <artifactId>jakarta.ws.rs-api</artifactId>
@@ -63,6 +60,7 @@
     </dependencies>
 
     <properties>
+        <elements.version>3.0.0-SNAPSHOT</elements.version>
         <rs.api>4.0.0</rs.api>
         <servlet.api>6.1.0</servlet.api>
         <logback.version>1.2.3</logback.version>
