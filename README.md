@@ -124,7 +124,7 @@ The deployment process involves uploading another project, via git, to your Elem
 3) Go to Edit for newly created Application.
 4) Copy the Script Repo URL.
 5) Either `git clone` the copied URL in a new folder, or add a new git remote to an existing git project deployment folder.
-   * You might need to add your SUPERUSER credentials to your git config or to the remote URL directly (e.g. `http://username:password@localhost:8080/code/git/ApplicationName`).
+   * You might need to add your SUPERUSER credentials to your git config or to the remote URL directly (e.g. `http://username:password@localhost:8080/code/ApplicationName`).
 6) Now you can move your deployment to the deployment project:
    * Move your classes to `classpath` or just move the jar file (that was created with `mvn install`, e.g. target/ElementSample-1.0-SNAPSHOT.jar) to the `lib` folder.
 7) Use git push [remote name] [local branch]:[remote branch]. 
