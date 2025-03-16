@@ -2,11 +2,13 @@
 
 Welcome to Elements!
 
-This project is intended to provide a simple example that can be used as a reference or starting point when creating your own custom Element withing Elements.
+This project is intended to provide a simple example that can be used as a reference or starting point when creating your own custom Element within Elements.
 
 Additional information can always be found in Custom Code section of the manual at https://manual.getelements.dev/
 
-If you have any questions, come say hi on [Discord](https://discord.gg/UEtvVjqQ)!
+If you have any questions, come say hi!
+
+[![Join our Discord](https://img.shields.io/badge/Discord-Join%20Chat-blue?logo=discord&logoColor=white)](https://bit.ly/eci-discord)
 
 ## Setup
 
@@ -28,7 +30,7 @@ To deploy to a local instance, you will also need:
  * [Elements Community Edition](https://github.com/Elemental-Computing/docker-compose/)
 
 > [!Note]
-> To run MongoDB in Docker, you can use the command `docker run -d -p 27017:27017 --name=mongo-example mongo:latest`, which starts a MongoDB container in detached mode and maps the default MongoDB port. Make sure you have Docker installed and running before executing this command.
+> To run MongoDB in Docker (recommended), you can navigate to `services-dev` and use the command `docker compose up --build`, which starts a MongoDB container in detached mode and maps the default MongoDB port. Make sure you have Docker installed and running before executing this command.
 
 ### Install dependencies
 
@@ -118,10 +120,10 @@ That's it!
 The deployment process involves uploading another project, via git, to your Elements Application repo. The deployment repo must follow a specific structure. We've included an element-example-deployment folder with an example structure. See [Packaging an Element](https://manual.getelements.dev/core-features/custom-code/element-structure#packaging-an-element) in the manual for more details.
 
 1) While running the Elements Docker containers locally, navigate to http://localhost:8080/admin/login in a browser. 
-2) Create a new Application using either the Elements UI.
+2) Create a new Application using the Elements UI.
 3) Go to Edit for newly created Application.
 4) Copy the Script Repo URL.
-5) Either clone this project to a new folder, or add a new git remote to an existing git project deployment folder.
+5) Either `git clone` the copied URL in a new folder, or add a new git remote to an existing git project deployment folder.
    * You might need to add your SUPERUSER credentials to your git config or to the remote URL directly (e.g. `http://username:password@localhost:8080/code/git/ApplicationName`).
 6) Now you can move your deployment to the deployment project:
    * Move your classes to `classpath` or just move the jar file (that was created with `mvn install`, e.g. target/ElementSample-1.0-SNAPSHOT.jar) to the `lib` folder.
