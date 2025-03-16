@@ -143,4 +143,7 @@ The deployment process involves uploading another project, via git, to your Elem
 
 With the code now deployed, your Element is now available for remote testing! 
 
-Try out GET http://localhost:8080/api/rest/application/Test/helloworld
+Try out GET http://localhost:8080/app/rest/example-element/helloworld
+
+> [!Note]
+> The `example-element` portion of the URL is determined by the `dev.getelements.elements.app.serve.prefix` value in the `dev.getelements.element.attributes.properties` file in the deployment project.
