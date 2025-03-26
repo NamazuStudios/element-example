@@ -147,3 +147,14 @@ Try out GET http://localhost:8080/app/rest/example-element/helloworld
 
 > [!Note]
 > The `example-element` portion of the URL is determined by the `dev.getelements.elements.app.serve.prefix` value in the `dev.getelements.element.attributes.properties` file in the deployment project.
+
+# Further Reading
+
+Elements uses two standard APIs for the inbound/outbound communication. Jakarta WebSocket and Jakarta RESTful Web Services. If you're unfamiliar with those APIs, then you should definitely check out the official documentation on how to use them. We've linked several great resources below to get you started.
+
+- [Jakarta RESTful Web Services Home Page](https://jakarta.ee/specifications/restful-ws/4.0/)
+- [Jakarta RESTful Web Services Tutorial](https://jakarta.ee/learn/docs/jakartaee-tutorial/current/websvcs/rest/rest.html)
+- [Jakarta WebSocket](https://jakarta.ee/specifications/websocket/2.1/)
+- [Java Magazine Websocket Tutorial](https://blogs.oracle.com/javamagazine/post/how-to-build-applications-with-the-websocket-api-for-java-ee-and-jakarta-ee)
+
+If you have existing code against those APIs, the integration effort should be a snap and require only adding a few simple annotations to your code and testing within Elements.
