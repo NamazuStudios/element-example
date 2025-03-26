@@ -21,8 +21,9 @@ This Element requires:
  * [Java](https://www.oracle.com/java/technologies/downloads/#java21) 21+
  * [Git](https://git-scm.com/downloads)
 
-To test locally, you will also need:
- * [MongoDB](https://www.mongodb.com/)
+To test locally, it is recommended to have MongoDB client installed to browse the local database. A few options are listed below:
+ * [Studio3T](https://studio3t.com/download/)
+ * [MongoDB Shell](https://www.mongodb.com/docs/mongodb-shell/install/)
 
 To deploy to a local instance, you will also need:
 
@@ -30,7 +31,7 @@ To deploy to a local instance, you will also need:
  * [Elements Community Edition](https://github.com/Elemental-Computing/docker-compose/)
 
 > [!Note]
-> To run MongoDB in Docker (recommended), you can navigate to `services-dev` and use the command `docker compose up --build`, which starts a MongoDB container in detached mode and maps the default MongoDB port. Make sure you have Docker installed and running before executing this command.
+> To run MongoDB in Docker (recommended), you can navigate to `services-dev` and use the command `docker compose up --build`, which starts a MongoDB container in detached mode and maps the default MongoDB port. Make sure you have Docker installed and running before executing this command. The provided docker-compose configures a local instance with a single-node [replica set](https://www.mongodb.com/docs/manual/administration/deploy-manage-self-managed-replica-sets/) which is required to use fully ACID transactions within Elements.
 
 ### Install dependencies
 
