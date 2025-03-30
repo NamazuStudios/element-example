@@ -8,13 +8,6 @@
     <artifactId>ElementSample</artifactId>
     <version>1.0-SNAPSHOT</version>
 
-<!--    <repositories>-->
-<!--        <repository>-->
-<!--            <id>elements-release</id>-->
-<!--            <url>https://maven.pkg.github.com/Elemental-Computing/elements</url>-->
-<!--        </repository>-->
-<!--    </repositories>-->
-
     <dependencies>
         <dependency>
             <groupId>dev.getelements.elements</groupId>
@@ -61,7 +54,7 @@
 
     <properties>
         <rs.api>4.0.0</rs.api>
-        <elements.version>3.0.49</elements.version>
+        <elements.version>3.0.52</elements.version>
         <servlet.api>6.1.0</servlet.api>
         <logback.version>1.2.3</logback.version>
         <maven.compiler.source>21</maven.compiler.source>
