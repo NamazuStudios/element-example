@@ -39,7 +39,7 @@ Run `mvn install` (or sync/reload the Maven project if your IDE provides the opt
 
 The `sdk` package allows you to register this Element within the Elements system.
 
-The `sdk-local` package allows you to debug locally (see src.test.java.Main).
+The `sdk-local` package allows you to debug locally (see src.test.java.SimpleExampleMain).
 
 `jakarta` is used for defining the endpoints (both http and websocket).
 
@@ -107,7 +107,7 @@ and we're done! There's a lot you can do from here, from writing your authoritat
 
 First, make sure that MongoDB is running (See Setup/Requirements above). 
 
-Next, run or debug test/Main.java. In this case, we've included an example of how to run a specific package, and how to access the User DAO and create a new user. 
+Next, run or debug test/SimpleExampleMain.java. In this case, we've included an example of how to run a specific package, and how to access the User DAO and create a new user. 
 
 With Elements running in debug mode, you can also set and hit breakpoints in your endpoint code, making debugging straightforward.
 

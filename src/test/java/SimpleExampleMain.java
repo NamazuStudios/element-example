@@ -2,7 +2,7 @@ import dev.getelements.elements.sdk.dao.UserDao;
 import dev.getelements.elements.sdk.local.ElementsLocalBuilder;
 import dev.getelements.elements.sdk.model.user.User;
 
-public class Main {
+public class SimpleExampleMain {
     public static void main(String[] args) {
 
         // Create the local instance of the Elements server
