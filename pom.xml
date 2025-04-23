@@ -54,7 +54,7 @@
 
     <properties>
         <rs.api>4.0.0</rs.api>
-        <elements.version>3.0.52</elements.version>
+        <elements.version>3.1.4</elements.version>
         <servlet.api>6.1.0</servlet.api>
         <logback.version>1.2.3</logback.version>
         <maven.compiler.source>21</maven.compiler.source>
