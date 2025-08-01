@@ -9,27 +9,50 @@
     <version>1.0-SNAPSHOT</version>
 
     <dependencies>
+        <!-- Project Dependencies -->
+
+        <!--
+        With Elements 3.3 and higher, the Element must provide the SPI in the distribution. Currently, the only SPI we
+        provide is the Guice based SPI and it contains some specifics which wire up the services within the Element
+        itself.
+        -->
+
+        <dependency>
+            <groupId>dev.getelements.elements</groupId>
+            <artifactId>sdk-spi</artifactId>
+            <version>${elements.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>dev.getelements.elements</groupId>
+            <artifactId>sdk-spi-guice</artifactId>
+            <version>${elements.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>dev.getelements.elements</groupId>
+            <artifactId>sdk-logback</artifactId>
+            <version>${elements.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.inject</groupId>
+            <artifactId>guice</artifactId>
+            <version>${guice.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>dev.getelements.elements</groupId>
+            <artifactId>sdk-local-maven</artifactId>
+            <version>${elements.version}</version>
+        </dependency>
+
+        <!-- Provided Dependencies -->
         <dependency>
             <groupId>dev.getelements.elements</groupId>
             <artifactId>sdk-local</artifactId>
             <version>${elements.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>dev.getelements.elements</groupId>
-            <artifactId>sdk</artifactId>
-            <version>${elements.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>jakarta.ws.rs</groupId>
-            <artifactId>jakarta.ws.rs-api</artifactId>
-            <version>${rs.api}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>jakarta.servlet</groupId>
-            <artifactId>jakarta.servlet-api</artifactId>
-            <version>${servlet.api}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -38,23 +61,48 @@
             <version>${jakarta.websocket.version}</version>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>jakarta.websocket</groupId>
-            <artifactId>jakarta.websocket-client-api</artifactId>
-            <version>${jakarta.websocket.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <version>${logback.version}</version>
-            <scope>test</scope>
-        </dependency>
+
     </dependencies>
+
+    <build>
+        <plugins>
+
+            <!--
+            The new SDK loader will automatically copy the dependencies of the Element to an expected path on disk
+            where it will be loaded in an isolated classpath similar to how the Element is loaded in the production
+            environment.
+
+            When deploying the Element, the dependencies will are all copied neatly to the `element-libs` directory
+            where they can be deployed alongside the Element JAR file or compiled classes.
+             -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.6.0</version>
+                <executions>
+                    <execution>
+                        <id>copy-element-deps</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <excludeScope>provided</excludeScope>
+                            <excludeGroupIds>ch.qos.logback</excludeGroupIds>
+                            <excludeArtifactIds>sdk-local,sdk-local-maven,sdk-logback</excludeArtifactIds>
+                            <outputDirectory>${project.build.directory}/element-libs</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+        </plugins>
+    </build>
 
     <properties>
         <rs.api>4.0.0</rs.api>
-        <elements.version>3.2.0</elements.version>
+        <guice.version>7.0.0</guice.version>
+        <elements.version>3.3.4</elements.version>
         <servlet.api>6.1.0</servlet.api>
         <logback.version>1.2.3</logback.version>
         <maven.compiler.source>21</maven.compiler.source>
