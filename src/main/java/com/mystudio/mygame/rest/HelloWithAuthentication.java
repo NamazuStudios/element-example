@@ -12,11 +12,11 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 
 @Tag(name = "Hello")
-@Path("/helloworldwithauthentication")
-public class HelloWorldWithAuthentication {
+@Path("/hellowithauthentication")
+public class HelloWithAuthentication {
 
     private final Element element = ElementSupplier
-            .getElementLocal(HelloWorldWithAuthentication.class)
+            .getElementLocal(HelloWithAuthentication.class)
             .get();
 
     private final GreetingService greetingService = element
@@ -27,7 +27,7 @@ public class HelloWorldWithAuthentication {
     @Produces(MediaType.TEXT_PLAIN)
     @Consumes(MediaType.TEXT_PLAIN)
     @Operation(
-            summary = "Hello world probe with login required",
+            summary = "Greeting with login check",
             description = "Checks if the session token in the header corresponds to at least a USER level user."
     )
     public String sayHelloWithAuth() {

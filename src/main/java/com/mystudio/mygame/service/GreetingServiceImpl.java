@@ -23,7 +23,7 @@ public class GreetingServiceImpl implements GreetingService {
         // the UserService will be automatically injected with the current user. This will apply an authentication
         // filter to every request and every service that is used in this application.
         final User currentUser = userService.getCurrentUser();
-        final boolean isLoggedIn = User.Level.UNPRIVILEGED.equals(currentUser.getLevel());
+        final boolean isLoggedIn = !User.Level.UNPRIVILEGED.equals(currentUser.getLevel());
         final String name = isLoggedIn ? currentUser.getName() : "Guest";
 
         return "Hello, " + name + "!";

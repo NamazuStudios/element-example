@@ -1,10 +1,9 @@
 package com.mystudio.mygame;
 
 import com.mystudio.mygame.rest.HelloWorld;
-import com.mystudio.mygame.rest.HelloWorldWithAuthentication;
+import com.mystudio.mygame.rest.HelloWithAuthentication;
 import dev.getelements.elements.sdk.annotation.ElementServiceExport;
 import dev.getelements.elements.sdk.annotation.ElementServiceImplementation;
-import dev.getelements.elements.sdk.annotation.ElementDefaultAttribute;
 import jakarta.ws.rs.core.Application;
 
 import java.util.Set;
@@ -17,28 +16,6 @@ import io.swagger.v3.jaxrs2.integration.resources.OpenApiResource;
 @ElementServiceExport(Application.class)
 public class HelloWorldApplication extends Application {
 
-    /**
-     * This attribute enables the authentication service for this application.
-     * If set to "true", the application will use the authentication service.
-     * If set to "false", the application will not use the authentication service.
-     *
-     * Specifically when the dev.getelements.elements.auth.enabled attribute is set to "true", we will automatically
-     * install a set of filters that will ensure that the user is authenticated and applied to the service layer for
-     * all requests. This can be enabled in external configuration, or use the default annotation driven approach
-     * here.
-     */
-    @ElementDefaultAttribute("true")
-    public static final String ENABLE_AUTH = "dev.getelements.elements.auth.enabled";
-
-    /**
-     * This attribute forces the name of the Element to the assigned value when running locally in the IDE, which
-     * determines the path as well.
-     *
-     * For example, the below value will produce the relative path /app/rest/example-element, which any endpoints will
-     * append to.
-     */
-    @ElementDefaultAttribute("example-element")
-    public static final String APP_SERVE_PREFIX = "dev.getelements.elements.app.serve.prefix";
 
     /**
      * Here we register all the classes that we want to be included in the Element.
@@ -49,7 +26,7 @@ public class HelloWorldApplication extends Application {
 
                 //Endpoints
                 HelloWorld.class,
-                HelloWorldWithAuthentication.class,
+                HelloWithAuthentication.class,
 
                 //Required if you want codegen to work for this
                 OpenApiResource.class
