@@ -30,12 +30,29 @@ public class HelloWorldApplication extends Application {
     @ElementDefaultAttribute("true")
     public static final String ENABLE_AUTH = "dev.getelements.elements.auth.enabled";
 
+    /**
+     * This attribute forces the name of the Element to the assigned value when running locally in the IDE, which
+     * determines the path as well.
+     *
+     * For example, the below value will produce the relative path /app/rest/example-element, which any endpoints will
+     * append to.
+     */
+    @ElementDefaultAttribute("example-element")
+    public static final String APP_SERVE_PREFIX = "dev.getelements.elements.app.serve.prefix";
+
+    /**
+     * Here we register all the classes that we want to be included in the Element.
+     */
     @Override
     public Set<Class<?>> getClasses() {
         return Set.of(
+
+                //Endpoints
                 HelloWorld.class,
                 HelloWorldWithAuthentication.class,
-                OpenApiResource.class //Required if you want codegen to work for this
+
+                //Required if you want codegen to work for this
+                OpenApiResource.class
         );
     }
 
