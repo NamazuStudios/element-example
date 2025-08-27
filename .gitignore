@@ -5,6 +5,7 @@
 # JDT-specific (Eclipse Java Development Tools)
 .classpath
 
+script-repos/
 target/
 pom.xml.tag
 pom.xml.releaseBackup

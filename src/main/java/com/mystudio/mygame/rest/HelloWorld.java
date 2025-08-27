@@ -14,7 +14,6 @@ public class HelloWorld {
 
     @GET
     @Produces(MediaType.TEXT_PLAIN)
-    @Consumes(MediaType.TEXT_PLAIN)
     @Operation(summary = "Hello world probe", description = "Returns a simple greeting")
     public String sayHello() {
 
