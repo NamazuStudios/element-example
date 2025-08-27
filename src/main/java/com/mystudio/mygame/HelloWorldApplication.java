@@ -1,12 +1,17 @@
 package com.mystudio.mygame;
 
 import com.mystudio.mygame.rest.HelloWorld;
+import com.mystudio.mygame.rest.HelloWorldWithAuthentication;
 import dev.getelements.elements.sdk.annotation.ElementServiceExport;
 import dev.getelements.elements.sdk.annotation.ElementServiceImplementation;
 import dev.getelements.elements.sdk.annotation.ElementDefaultAttribute;
 import jakarta.ws.rs.core.Application;
 
 import java.util.Set;
+
+// Swagger OpenAPI JAX-RS resource
+import io.swagger.v3.jaxrs2.integration.resources.OpenApiResource;
+
 
 @ElementServiceImplementation
 @ElementServiceExport(Application.class)
@@ -27,7 +32,11 @@ public class HelloWorldApplication extends Application {
 
     @Override
     public Set<Class<?>> getClasses() {
-        return Set.of(HelloWorld.class);
+        return Set.of(
+                HelloWorld.class,
+                HelloWorldWithAuthentication.class,
+                OpenApiResource.class //Required if you want codegen to work for this
+        );
     }
 
 }

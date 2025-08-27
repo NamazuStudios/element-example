@@ -62,7 +62,43 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- Swagger Core for Jakarta namespace -->
+        <dependency>
+            <groupId>io.swagger.core.v3</groupId>
+            <artifactId>swagger-jaxrs2-jakarta</artifactId>
+            <version>${swagger.version}</version>
+
+            <!-- Avoid conflicts with parent dependencies -->
+            <exclusions>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-databind</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-annotations</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!-- Annotations like @Operation, @Schema. Provided by Elements Core -->
+        <dependency>
+            <groupId>io.swagger.core.v3</groupId>
+            <artifactId>swagger-annotations-jakarta</artifactId>
+            <version>${swagger.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- Programmatic configuration and contexts -->
+        <dependency>
+            <groupId>io.swagger.core.v3</groupId>
+            <artifactId>swagger-integration-jakarta</artifactId>
+            <version>${swagger.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
     </dependencies>
+
 
     <build>
         <plugins>
@@ -100,9 +136,10 @@
     </build>
 
     <properties>
+        <swagger.version>2.2.22</swagger.version>
         <rs.api>4.0.0</rs.api>
         <guice.version>7.0.0</guice.version>
-        <elements.version>3.3.4</elements.version>
+        <elements.version>3.3.10</elements.version>
         <servlet.api>6.1.0</servlet.api>
         <logback.version>1.2.3</logback.version>
         <maven.compiler.source>21</maven.compiler.source>
