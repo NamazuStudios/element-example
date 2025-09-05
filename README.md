@@ -4,7 +4,7 @@ Welcome to Elements!
 
 This project is intended to provide a simple example that can be used as a reference or starting point when creating your own custom Element within Elements.
 
-Additional information can always be found in Custom Code section of the manual at https://manual.getelements.dev/
+Additional information can always be found in Custom Code section of the manual at [https://namazustudios.com/docs/](https://namazustudios.com/docs/)
 
 If you have any questions, come say hi!
 
@@ -118,7 +118,7 @@ That's it!
 
 ### Deployment
 
-The deployment process involves uploading another project, via git, to your Elements Application repo. The deployment repo must follow a specific structure. We've included an element-example-deployment folder with an example structure. See [Packaging an Element](https://manual.getelements.dev/core-features/custom-code/element-structure#packaging-an-element) in the manual for more details.
+The deployment process involves uploading another project, via git, to your Elements Application repo. The deployment repo must follow a specific structure. We've included an element-example-deployment folder with an example structure. See [Packaging an Element]([https://namazustudios.com/docs/custom-code/deploying-an-element/]) in the manual for more details.
 
 1) While running the Elements Docker containers locally, navigate to http://localhost:8080/admin/login in a browser. 
 2) Create a new Application using the Elements UI.
