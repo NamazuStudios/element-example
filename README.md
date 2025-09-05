@@ -118,7 +118,7 @@ That's it!
 
 ### Deployment
 
-The deployment process involves uploading another project, via git, to your Elements Application repo. The deployment repo must follow a specific structure. We've included an element-example-deployment folder with an example structure. See [Packaging an Element]([https://namazustudios.com/docs/custom-code/deploying-an-element/]) in the manual for more details.
+The deployment process involves uploading another project, via git, to your Elements Application repo. The deployment repo must follow a specific structure. We've included an element-example-deployment folder with an example structure. See [Packaging an Element](https://namazustudios.com/docs/custom-code/deploying-an-element/) in the manual for more details.
 
 1) While running the Elements Docker containers locally, navigate to http://localhost:8080/admin/login in a browser. 
 2) Create a new Application using the Elements UI.
