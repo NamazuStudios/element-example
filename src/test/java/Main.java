@@ -1,13 +1,27 @@
 import dev.getelements.elements.sdk.dao.UserDao;
 import dev.getelements.elements.sdk.local.ElementsLocalBuilder;
 import dev.getelements.elements.sdk.model.user.User;
+import dev.getelements.elements.sdk.util.PropertiesAttributes;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Properties;
 
 public class Main {
-    public static void main(String[] args) {
+
+    private static final String CONFIGURATION_FILE = "element-example-deployment/dev.getelements.element.attributes.properties";
+
+    public static void main(String[] args) throws IOException {
+
+        final var properties = new Properties();
+
+        try (final var is = new FileInputStream(CONFIGURATION_FILE)) {
+            properties.load(is);
+        }
 
         // Create the local instance of the Elements server
         final var local = ElementsLocalBuilder.getDefault()
-                .withElementNamed("example", "com.mystudio.mygame")
+                .withElementNamed("example", "com.mystudio.mygame", PropertiesAttributes.wrap(properties))
                 .build();
 
         // The Data Access Object (DAO) pattern is a structural pattern that allows us to isolate the
