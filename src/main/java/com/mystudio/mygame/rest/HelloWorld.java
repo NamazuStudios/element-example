@@ -8,7 +8,9 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 
-@Tag(name = "Hello")
+import static com.mystudio.mygame.HelloWorldApplication.OPENAPI_TAG;
+
+@Tag(name = OPENAPI_TAG)
 @Path("/helloworld")
 public class HelloWorld {
 

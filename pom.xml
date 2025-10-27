@@ -139,7 +139,7 @@
         <swagger.version>2.2.22</swagger.version>
         <rs.api>4.0.0</rs.api>
         <guice.version>7.0.0</guice.version>
-        <elements.version>3.3.10</elements.version>
+        <elements.version>3.4.11</elements.version>
         <servlet.api>6.1.0</servlet.api>
         <logback.version>1.2.3</logback.version>
         <maven.compiler.source>21</maven.compiler.source>
