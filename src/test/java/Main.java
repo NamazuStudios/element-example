@@ -9,19 +9,34 @@ import java.util.Properties;
 
 public class Main {
 
-    private static final String CONFIGURATION_FILE = "element-example-deployment/dev.getelements.element.attributes.properties";
+    private static final String ELEMENT_CONFIGURATION_FILE = "element-example-deployment/dev.getelements.element.attributes.properties";
+
+
+    private static final String CROSSFIRE_CONFIGURATION_FILE = "element-example-deployment/dev.getelements.elements.crossfire.properties";
 
     public static void main(String[] args) throws IOException {
 
-        final var properties = new Properties();
+        final var elementProperties = new Properties();
+        final var crossfireProperties = new Properties();
 
-        try (final var is = new FileInputStream(CONFIGURATION_FILE)) {
-            properties.load(is);
+        try (final var is = new FileInputStream(ELEMENT_CONFIGURATION_FILE)) {
+            elementProperties.load(is);
+        }
+
+        try (final var is = new FileInputStream(CROSSFIRE_CONFIGURATION_FILE)) {
+            crossfireProperties.load(is);
         }
 
         // Create the local instance of the Elements server
         final var local = ElementsLocalBuilder.getDefault()
-                .withElementNamed("example", "com.mystudio.mygame", PropertiesAttributes.wrap(properties))
+                .withElementNamed(
+                        "example",
+                        "com.mystudio.mygame",
+                        PropertiesAttributes.wrap(elementProperties))
+                .withElementNamed(
+                        "example",
+                        "dev.getelements.elements.crossfire",
+                        PropertiesAttributes.wrap(crossfireProperties))
                 .build();
 
         // The Data Access Object (DAO) pattern is a structural pattern that allows us to isolate the
