@@ -33,10 +33,11 @@ public class Main {
                         "example",
                         "com.mystudio.mygame",
                         PropertiesAttributes.wrap(elementProperties))
-                .withElementNamed(
-                        "example",
-                        "dev.getelements.elements.crossfire",
-                        PropertiesAttributes.wrap(crossfireProperties))
+                // Uncomment to add the Crossfire element as well
+//                .withElementNamed(
+//                        "example",
+//                        "dev.getelements.elements.crossfire",
+//                        PropertiesAttributes.wrap(crossfireProperties))
                 .build();
 
         // The Data Access Object (DAO) pattern is a structural pattern that allows us to isolate the

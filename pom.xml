@@ -108,10 +108,73 @@
             <dependencies>
                 <dependency>
                     <groupId>dev.getelements.elements.crossfire</groupId>
-                    <artifactId>element</artifactId>
+                    <artifactId>server</artifactId>
                     <version>${crossfire.version}</version>
+                    <scope>provided</scope>
+                </dependency>
+                <dependency>
+                    <groupId>dev.getelements.elements.crossfire</groupId>
+                    <artifactId>server</artifactId>
+                    <version>${crossfire.version}</version>
+                    <classifier>element</classifier>
+                    <scope>provided</scope>
                 </dependency>
             </dependencies>
+            <build>
+                <plugins>
+                    <!--
+                    We will likely remove this approach in the future as it has the potential to create classpath pollution.
+                    In order to do so, we need to add more granularity to the SDK loader to allow for more flexible loading.
+                    -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <version>3.6.0</version>
+                        <executions>
+                            <execution>
+                                <id>copy-crossfire-libs</id>
+                                <phase>generate-resources</phase>
+                                <goals>
+                                    <goal>copy-dependencies</goal>
+                                </goals>
+                                <configuration>
+                                    <includeScope>provided</includeScope>
+                                    <prependGroupId>true</prependGroupId>
+                                    <includeGroupIds>dev.getelements.elements.crossfire</includeGroupIds>
+                                    <includeArtifactIds>server</includeArtifactIds>
+                                    <excludeClassifiers>element</excludeClassifiers>
+                                    <outputDirectory>${project.build.directory}/element-libs</outputDirectory>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <!--
+                    This makes the Crossfire element show up in a distribution built with this profile.
+                    -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <version>3.6.0</version>
+                        <executions>
+                            <execution>
+                                <id>copy-crossfire-element</id>
+                                <phase>generate-resources</phase>
+                                <goals>
+                                    <goal>copy-dependencies</goal>
+                                </goals>
+                                <configuration>
+                                    <includeScope>provided</includeScope>
+                                    <prependGroupId>true</prependGroupId>
+                                    <includeGroupIds>dev.getelements.elements.crossfire</includeGroupIds>
+                                    <includeArtifactIds>server</includeArtifactIds>
+                                    <includeClassifiers>element</includeClassifiers>
+                                    <outputDirectory>${element.target.dir}/dev.getelements.elements.crossfire.server/lib</outputDirectory>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
 
     </profiles>
@@ -126,6 +189,9 @@
 
             When deploying the Element, the dependencies will are all copied neatly to the `element-libs` directory
             where they can be deployed alongside the Element JAR file or compiled classes.
+
+            We will likely remove this approach in the future as it has the potential to create classpath pollution.
+            In order to do so, we need to add more granularity to the SDK loader to allow for more flexible loading.
              -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -139,6 +205,7 @@
                             <goal>copy-dependencies</goal>
                         </goals>
                         <configuration>
+                            <prependGroupId>true</prependGroupId>
                             <excludeScope>provided</excludeScope>
                             <excludeGroupIds>ch.qos.logback</excludeGroupIds>
                             <excludeArtifactIds>sdk-local,sdk-local-maven,sdk-logback</excludeArtifactIds>
@@ -148,6 +215,94 @@
                 </executions>
             </plugin>
 
+            <!--
+            This makes a complete ready-to-deploy copy of your Element's compiled code. In future releases, we will
+            make this process easier and more strealined and deprecate the approach in the above steps.
+            -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>copy-element-build</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <copy todir="${element.distribution.dir}/classpath">
+                                    <fileset dir="${project.build.directory}/classes" />
+                                </copy>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.3.1</version>
+                <executions>
+                    <execution>
+                        <id>copy-element-resources</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${element.distribution.dir}/classpath</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>src/main/resources</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.6.0</version>
+                <executions>
+                    <execution>
+                        <id>copy-element-dependencies</id>
+                        <phase>process-classes</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <prependGroupId>true</prependGroupId>
+                            <excludeScope>provided</excludeScope>
+                            <excludeGroupIds>ch.qos.logback,dev.getelements.elements.crossfire</excludeGroupIds>
+                            <excludeArtifactIds>sdk-local,sdk-local-maven,sdk-logback</excludeArtifactIds>
+                            <outputDirectory>${element.distribution.dir}/lib</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>bundle-distribution-zip</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <zip destfile="${project.build.directory}/${project.artifactId}-${project.version}.zip">
+                                    <fileset dir="${element.distribution.dir}"/>
+                                </zip>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
@@ -156,13 +311,16 @@
         <rs.api>4.0.0</rs.api>
         <guice.version>7.0.0</guice.version>
         <elements.version>3.4.12</elements.version>
-        <crossfire.version>1.0.2</crossfire.version>
+        <crossfire.version>1.0.4</crossfire.version>
         <servlet.api>6.1.0</servlet.api>
         <logback.version>1.2.3</logback.version>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <jakarta.websocket.version>2.1.0</jakarta.websocket.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <element.target.dir>${project.build.directory}/element</element.target.dir>
+        <element.distribution.dir>${element.target.dir}/${groupId}.${artifactId}</element.distribution.dir>
+        <element.distribution.zip>${element.target.dir}/${project.artifactId}-${project.version}.zip</element.distribution.zip>
     </properties>
 
 </project>
