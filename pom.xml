@@ -103,7 +103,7 @@
         <profile>
             <id>namazu-crossfire</id>
             <activation>
-                <activeByDefault>true</activeByDefault>
+                <activeByDefault>${crossfire.enabled}</activeByDefault>
             </activation>
             <dependencies>
                 <dependency>
@@ -318,6 +318,7 @@
         <maven.compiler.target>21</maven.compiler.target>
         <jakarta.websocket.version>2.1.0</jakarta.websocket.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <crossfire.enabled>false</crossfire.enabled>
         <element.target.dir>${project.build.directory}/element</element.target.dir>
         <element.distribution.dir>${element.target.dir}/${groupId}.${artifactId}</element.distribution.dir>
         <element.distribution.zip>${element.target.dir}/${project.artifactId}-${project.version}.zip</element.distribution.zip>
