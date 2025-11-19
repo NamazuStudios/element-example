@@ -10,7 +10,7 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>sdk</module>
+        <module>api</module>
         <module>element</module>
     </modules>
 
@@ -27,8 +27,9 @@
             <!-- Inter-project dependencies -->
             <dependency>
                 <groupId>com.example.element</groupId>
-                <artifactId>sdk</artifactId>
+                <artifactId>api</artifactId>
                 <version>${project.version}</version>
+                <scope>provided</scope>
             </dependency>
 
             <!-- Elements SDK Dependencies Provided by the Core Runtime -->

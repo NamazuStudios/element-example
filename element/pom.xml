@@ -56,7 +56,7 @@
 
         <dependency>
             <groupId>com.example.element</groupId>
-            <artifactId>sdk</artifactId>
+            <artifactId>api</artifactId>
         </dependency>
 
         <dependency>
@@ -73,7 +73,7 @@
         </dependency>
         <dependency>
             <groupId>com.example.element</groupId>
-            <artifactId>sdk</artifactId>
+            <artifactId>api</artifactId>
             <scope>provided</scope>
         </dependency>
 
@@ -340,7 +340,7 @@
                             <prependGroupId>true</prependGroupId>
                             <includeScope>provided</includeScope>
                             <includeGroupIds>${project.groupId}</includeGroupIds>
-                            <includeArtifactIds>sdk</includeArtifactIds>
+                            <includeArtifactIds>api</includeArtifactIds>
                             <outputDirectory>${element.distribution.dir}/api</outputDirectory>
                         </configuration>
                     </execution>
