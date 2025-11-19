@@ -10,4 +10,5 @@ public interface GreetingService {
      * @return The greeting based on if a logged-in user is found
      */
     String getGreeting();
+
 }

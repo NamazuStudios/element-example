@@ -18,6 +18,11 @@
   <name>Example SDK</name>
   <description>SDK and Interfaces for the Example Element</description>
 
-
+  <dependencies>
+    <dependency>
+      <groupId>dev.getelements.elements</groupId>
+      <artifactId>sdk</artifactId>
+    </dependency>
+  </dependencies>
 
 </project>
