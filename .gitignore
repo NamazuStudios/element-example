@@ -53,3 +53,8 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+## Directories created by Namazu Elemetns
+/cdn-repos/**
+/script-repos/**
+
