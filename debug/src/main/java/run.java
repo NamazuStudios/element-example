@@ -1,11 +1,9 @@
-package com.example.element;
-
 import dev.getelements.elements.sdk.local.ElementsLocalBuilder;
 
 /**
  * Runs your local Element in the SDK.
  */
-public class DebugLocalElement {
+public class run {
     public static void main(final String[] args ) {
 
         final var local = ElementsLocalBuilder.getDefault()
