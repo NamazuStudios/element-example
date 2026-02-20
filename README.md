@@ -10,6 +10,33 @@ If you have any questions, come say hi!
 
 [![Join our Discord](https://img.shields.io/badge/Discord-Join%20Chat-blue?logo=discord&logoColor=white)](https://fly.conncord.com/match/hubspot?hid=21130957&cid=%7B%7B%20personalization_token%28%27contact.hs_object_id%27%2C%20%27%27%29%20%7D%7D)
 
+---
+
+## Namazu Elements 3.7 — Upcoming Release Notice
+
+The `example/3.7` branch of this repository targets the upcoming **Namazu Elements 3.7.x** release, which introduces fundamental changes to how Elements are built and distributed. The core shift is that Elements are now loaded and referenced entirely by their **Maven artifact coordinates**, replacing the previous git-based deployment mechanism. This brings proper repository-based publishing, isolated per-element classpaths, and explicit inter-element API contracts via a new `.elm` archive format.
+
+If you are upgrading an existing Element, please consult the appropriate migration guide before updating your project:
+
+- **[MIGRATION_3.6.md](MIGRATION_3.6.md)** — Upgrading from Elements 3.6 to 3.7
+- **[MIGRATION_3.5.md](MIGRATION_3.5.md)** — Upgrading from Elements 3.5 or earlier to 3.7 (includes the full single-module to multi-module restructuring)
+
+### Branch strategy
+
+Each major and minor release of Namazu Elements has a corresponding `example/<version>` branch in this repository that contains a working example project targeting that release:
+
+| Branch | Elements version |
+|---|---|
+| `example/3.7` | 3.7.x (upcoming) |
+| `example/3.6` | 3.6.x |
+| `example/3.5` | 3.5.x and earlier (see `main`) |
+
+Going forward, every major and minor release will be kept in its own branch so that you can always check out the branch matching your deployed version of Elements and have a known-good reference project to build from.
+
+---
+
+
+
 ## Setup
 
 Elements (as well as this Element) uses [Maven](https://maven.apache.org/) to manage its dependencies. Refer to the pom.xml in the root of the project to see how the dependencies are structured.
