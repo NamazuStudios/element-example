@@ -34,7 +34,7 @@ In your root `pom.xml`, update the `elements.version` property:
 
 ## 2. Switch to the SDK BOM
 
-3.7 introduces `sdk-bom`, a bill-of-materials POM that centralises all SDK dependency versions and scopes. Replace any hand-listed SDK entries in `<dependencyManagement>` with a single BOM import:
+3.7 introduces `sdk-bom`, a [bill-of-materials (BOM) POM](https://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html#bill-of-materials-bom-poms) that centralises all SDK dependency versions and scopes. Replace any hand-listed SDK entries in `<dependencyManagement>` with a single BOM import:
 
 ```xml
 <!-- Before (3.6): individual SDK entries with explicit versions -->
@@ -82,9 +82,11 @@ Move any version properties that were previously declared in `element/pom.xml` u
 
 ---
 
-## 3. Add the API Classifier Jar
+## 3. Add the API Classifier Jar *(optional)*
 
-3.7 introduces a new concept: a *classified* API jar that is exported to other Elements through the `.elm` archive. Two changes are required.
+> **This step is only required if your Element needs to export interfaces or types to other Elements in the same deployment.** The `api` module concept was introduced in 3.6 but the cross-element type export mechanism was not fully supported at runtime until 3.7. If your Element operates standalone, you can skip this step entirely. Adding it now is good practice for future-proofing, but it has no effect on your Element's behaviour unless another Element explicitly depends on it.
+
+3.7 formalises the *classified* API jar that is exported to other Elements through the `.elm` archive. Two changes are required.
 
 ### 3a. Root pom.xml — declare the classifier property and artifacts
 
@@ -359,8 +361,8 @@ Key builder methods:
 | `withSourceRoot()` | Locates the parent POM and runs `mvn -DskipTests install` automatically before starting, so all artifacts are up to date in the local Maven repository |
 | `useDefaultRepositories(true)` | Includes the standard Maven repositories for resolution |
 | `addSpiBuiltin("GUICE_7_0_0")` | Selects the built-in Guice 7 SPI loader |
-| `addApiArtifact(coords)` | Registers an API classifier jar on the shared API classpath |
-| `addElementArtifact(coords)` | Registers the element implementation jar on the element classpath |
+| `addApiArtifact(coords)` | Registers an API classifier jar on the shared API classpath; `coords` is a standard Maven [artifact coordinate](https://maven.apache.org/pom.html#Maven_Coordinates) in `groupId:artifactId:version` form |
+| `addElementArtifact(coords)` | Registers the element implementation jar on the element classpath; same coordinate format |
 
 > **Working directory:** `withSourceRoot()` expects the process working directory to be the **parent POM directory** (the project root). When running from an IDE, make sure the run configuration's working directory is set to the root of the multi-module project, not the `debug/` subdirectory. The SDK will locate `pom.xml` there and invoke Maven against it automatically before loading your Element.
 
@@ -377,13 +379,23 @@ If your `element/pom.xml` contains a `<profile>` block for `namazu-crossfire` (u
 - [ ] `elements.version` → `3.7.0-SNAPSHOT` in root `pom.xml`
 - [ ] Replace individual SDK `<dependencyManagement>` entries with the `sdk-bom` import
 - [ ] Move version properties from `element/pom.xml` to root `pom.xml`
-- [ ] Add `api.classifier` property and classified-api entries to root `pom.xml`
-- [ ] Add `maven-jar-plugin` classified-jar execution to `api/pom.xml`
+- [ ] *(optional)* Add `api.classifier` property and classified-api entries to root `pom.xml` — only needed to export types to other Elements
+- [ ] *(optional)* Add `maven-jar-plugin` classified-jar execution to `api/pom.xml`
 - [ ] Remove `element/src/assembly/zip.xml` and old assembly/antrun/distribution plugin config from `element/pom.xml`
 - [ ] Add ELM archive build (dependency-plugin + antrun + build-helper) to `element/pom.xml`
-- [ ] Add classified API dependency to `element/pom.xml`
+- [ ] *(optional)* Add classified API dependency to `element/pom.xml` — only needed if `api` module exists
 - [ ] Delete `element/src/test/java/Main.java`
 - [ ] Add `debug` Maven module with `sdk-local`, `sdk-local-maven`, `sdk-logback` dependencies
 - [ ] Add `debug` entry-point using the new `ElementsLocalBuilder` fluent API
 - [ ] Update `OpenAPISecurityConfig` import for `SESSION_SECRET`
 - [ ] Remove `namazu-crossfire` Maven profile if present
+
+---
+
+## Further Reading
+
+- **[Introduction to Dependency Mechanism — Bill of Materials (BOM) POMs](https://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html#bill-of-materials-bom-poms)** — Apache Maven official guide explaining how BOM imports work in `<dependencyManagement>` and why they prevent version conflicts across multi-module projects.
+
+- **[`java.util.ServiceLoader` — Java 21 API](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/ServiceLoader.html)** — Java 21 reference for the Service Provider Interface (SPI) mechanism that Elements uses to locate and load the correct Element runtime. Understanding `ServiceLoader` explains why `addSpiBuiltin` selects a named provider configuration rather than scanning the classpath.
+
+- **[POM Reference — Maven Coordinates](https://maven.apache.org/pom.html#Maven_Coordinates)** — Apache Maven official reference for `groupId`, `artifactId`, `version`, and `classifier` — the coordinate components used throughout this migration guide in `addApiArtifact(...)` and `addElementArtifact(...)` calls.

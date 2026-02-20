@@ -16,7 +16,7 @@ This replaces the previous git-based deployment system, in which the runtime dis
 - **Reproducible builds:** exact artifact versions are pinned in the deployment descriptor rather than inferred from git state.
 - **Isolated classpaths:** the `api/`, `lib/`, and `classpath/` sections of the `.elm` archive map directly to separate classloader layers inside the runtime, eliminating the classpath pollution problems that the old flat-distribution approach was prone to.
 - **Inter-element API contracts:** the classified API jar (`api/` directory in the archive) makes the boundary between what an Element exports and what it keeps private explicit and enforced at load time.
-- **Builtin SPI Configurations:** Namazu Elements does not "know" how an Element loads. Rather it uses an SPI (Service Provider Implementation) on the Element's classpath to perform the loading. Prior to 3.7 we bundled this in the Element's implementation and it forced lock-step versioning due to binary incompatibilities. By providing this on-the-fly we have eliminated that issue by providing pre-determined configurations that can cross version to version.
+- **Builtin SPI Configurations:** Namazu Elements does not "know" how an Element loads. Rather it uses an [SPI (Service Provider Implementation)](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/ServiceLoader.html) on the Element's classpath to perform the loading. Prior to 3.7 we bundled this in the Element's implementation and it forced lock-step versioning due to binary incompatibilities. By providing this on-the-fly we have eliminated that issue by providing pre-determined configurations that can cross version to version.
 
 All the specific migration steps below flow from this architectural change.
 
@@ -31,7 +31,7 @@ The single flat Maven project becomes a parent POM with three submodules.
 ```
 project-root/
 ├── pom.xml                  ← parent POM (packaging=pom)
-├── api/
+├── api/                     ← optional: only needed to export types to other Elements
 │   ├── pom.xml
 │   └── src/main/java/       ← exported interfaces (e.g. service interfaces)
 ├── element/
@@ -42,17 +42,19 @@ project-root/
     └── src/main/java/       ← local runner (was src/test/java/Main.java)
 ```
 
+> **The `api` module is optional.** Create it only if your Element needs to export interfaces or types that other Elements in the same deployment will consume. In 3.5 and earlier this capability did not exist at all, so adding an `api` module now is purely a forward-compatibility investment — it does not affect the behaviour of your Element in a 3.7 deployment unless another Element explicitly depends on it.
+
 ### What moves where
 
 | Old location | New location |
 |---|---|
 | `src/main/java/com/mystudio/mygame/**` (impl) | `element/src/main/java/com/mystudio/mygame/**` |
-| `src/main/java/com/mystudio/mygame/service/GreetingService.java` (interface) | `api/src/main/java/com/mystudio/mygame/service/GreetingService.java` |
+| `src/main/java/com/mystudio/mygame/service/GreetingService.java` (interface, if exporting) | `api/src/main/java/com/mystudio/mygame/service/GreetingService.java` |
 | `src/main/resources/**` | `element/src/main/resources/**` |
 | `src/test/java/Main.java` | Replaced by `debug/src/main/java/run.java` (see Step 5) |
 | `src/assembly/zip.xml` | **Delete it** — replaced by ELM archive build |
 
-The `GreetingService` interface (and any other interfaces you want other Elements to consume) must live in `api/`. All implementation classes remain in `element/`.
+If you are creating an `api` module, move only the interfaces and DTOs you intend to share with other Elements into it. All implementation classes remain in `element/`.
 
 ---
 
@@ -81,7 +83,7 @@ Replace the root `pom.xml` entirely. The old root was both the parent and the im
 
 ```xml
 <modules>
-    <module>api</module>
+    <module>api</module>     <!-- optional: omit if not exporting types to other Elements -->
     <module>element</module>
     <module>debug</module>
 </modules>
@@ -117,7 +119,7 @@ Remove the old distribution-path properties and add `api.classifier`:
 
 ### Replace `<dependencies>` with `<dependencyManagement>` + BOM
 
-The old root listed every dependency directly with explicit versions. In 3.7, the root POM only manages versions via the `sdk-bom` import — it does **not** declare dependencies itself. Child modules declare only what they use.
+The old root listed every dependency directly with explicit versions. In 3.7, the root POM only manages versions via the `sdk-bom` import using Maven's [bill-of-materials (BOM) pattern](https://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html#bill-of-materials-bom-poms) — it does **not** declare dependencies itself. Child modules declare only what they use.
 
 ```xml
 <!-- Remove the entire old <dependencies> block from root pom.xml -->
@@ -173,7 +175,9 @@ The `<profiles>` block containing `namazu-crossfire` is gone. Delete it entirely
 
 ---
 
-## Step 3 — Create `api/pom.xml`
+## Step 3 — Create `api/pom.xml` *(optional)*
+
+> **Skip this step** if your Element does not need to share types with other Elements in the same deployment. The `api` module did not exist in 3.5 and earlier — introducing it now is good practice for future-proofing, but it has no effect on your Element's behaviour unless another Element explicitly declares a dependency on it.
 
 Create a new `api/` directory with the following `pom.xml`. This module holds interfaces and DTOs that you want to export to other Elements.
 
@@ -537,14 +541,14 @@ public class run {
 
 | Old method | New equivalent |
 |---|---|
-| `.withElementNamed(name, pkg, attrs)` | `.withDeployment(builder -> ...)` |
+| `.withElementNamed(name, pkg, attrs)` | `.withDeployment(builder -> ...)` with explicit [Maven artifact coordinates](https://maven.apache.org/pom.html#Maven_Coordinates) (`groupId:artifactId:version`) for the SPI, API, and element jars |
 | `PropertiesAttributes.wrap(props)` | Removed — attributes declared as `@ElementDefaultAttribute` in code |
 | `local.getRootElementRegistry()` | Removed from local runner bootstrap |
 | `try (local) { local.start(); local.run(); }` | `local.start(); local.run();` (no try-with-resources needed) |
 
 ### `addSpiBuiltin` values
 
-The SPI is now explicitly named in the builder rather than inferred from the classpath. For the Guice SPI:
+The [SPI (Service Provider Implementation)](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/ServiceLoader.html) is now explicitly named in the builder rather than inferred from the classpath. For the Guice SPI:
 
 ```java
 .addSpiBuiltin("GUICE_7_0_0")
@@ -628,9 +632,9 @@ If you have custom attributes beyond the two shown above, add a `public static f
 - [ ] Convert root `pom.xml` to `<packaging>pom</packaging>` parent with `<modules>`
 - [ ] Change root `groupId` from `org.example` to `com.example.element`
 - [ ] Change root `artifactId` from `ElementSample` to `parent`
-- [ ] Create `api/` module with `maven-jar-plugin` classified-jar execution
+- [ ] *(optional)* Create `api/` module with `maven-jar-plugin` classified-jar execution — only needed to export types to other Elements
+- [ ] *(optional)* Move shared interfaces into `api/src/main/java/`
 - [ ] Create `element/` module, move `src/main/java` + `src/main/resources` into it
-- [ ] Move service interfaces into `api/src/main/java/`
 - [ ] Create `debug/` module with `sdk-local`, `sdk-local-maven`, `sdk-logback`
 
 **Root pom.xml:**
@@ -638,14 +642,14 @@ If you have custom attributes beyond the two shown above, add a `public static f
 - [ ] Remove `<build>` block (moved to `element/pom.xml`)
 - [ ] Remove `namazu-crossfire` profile
 - [ ] Add `sdk-bom` import in `<dependencyManagement>`
-- [ ] Add `api.classifier` property
-- [ ] Replace old distribution-path properties with `api.classifier`
+- [ ] *(optional)* Add `api.classifier` property and classified-api `<dependencyManagement>` entries — only needed if creating an `api` module
+- [ ] Replace old distribution-path properties
 
 **element/pom.xml:**
 - [ ] Add ELM archive build: `maven-dependency-plugin` (elm-copy-api-deps, elm-copy-lib-deps) + `maven-antrun-plugin` (elm-stage-classpath, elm-create-archive) + `build-helper-maven-plugin` (attach-elm)
 - [ ] Remove `sdk-spi`, `sdk-logback`, `logback-classic`, `sdk-local`, `sdk-local-maven` dependencies
 - [ ] Remove `swagger-annotations-jakarta`, `swagger-integration-jakarta`, Jackson exclusions
-- [ ] Add classified API jar dependency
+- [ ] *(optional)* Add classified API jar dependency — only needed if `api` module exists
 
 **debug module:**
 - [ ] Write `debug/src/main/java/run.java` using new `ElementsLocalBuilder` fluent API
@@ -656,3 +660,13 @@ If you have custom attributes beyond the two shown above, add a `public static f
 - [ ] Update `OpenAPISecurityConfig` to use `AuthSchemes.SESSION_SECRET` from `sdk-jakarta-rs`
 - [ ] Replace any properties-file-loaded attributes with `@ElementDefaultAttribute` constants
 - [ ] Delete `src/assembly/zip.xml`, `src/test/java/Main.java`, old `.properties` deployment files
+
+---
+
+## Further Reading
+
+- **[Introduction to Dependency Mechanism — Bill of Materials (BOM) POMs](https://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html#bill-of-materials-bom-poms)** — Apache Maven official guide explaining how BOM imports work in `<dependencyManagement>` and why they prevent version conflicts across multi-module projects. This is the mechanism behind the `sdk-bom` import introduced in 3.7.
+
+- **[`java.util.ServiceLoader` — Java 21 API](https://docs.oracle.com/en/java/javase/21/docs/api/java.base/java/util/ServiceLoader.html)** — Java 21 reference for the Service Provider Interface (SPI) mechanism. Elements uses `ServiceLoader` internally to locate and initialise the Element runtime; the `addSpiBuiltin("GUICE_7_0_0")` call in the builder selects a named provider configuration rather than leaving discovery to classpath scanning.
+
+- **[POM Reference — Maven Coordinates](https://maven.apache.org/pom.html#Maven_Coordinates)** — Apache Maven official reference for `groupId`, `artifactId`, `version`, and `classifier` — the coordinate components that identify every artifact referenced in this migration guide, including the `groupId:artifactId:version` strings passed to `addApiArtifact(...)` and `addElementArtifact(...)`.
