@@ -36,7 +36,7 @@ import static io.swagger.v3.oas.annotations.enums.SecuritySchemeType.APIKEY;
                 type = APIKEY,
                 in = HEADER,
                 name = SESSION_SECRET,
-                paramName = Headers.SESSION_SECRET,
+                paramName = SESSION_SECRET,
                 description = "Session secret required for authenticated endpoints")
 })
 public class OpenAPISecurityConfig {}

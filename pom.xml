@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -12,19 +12,51 @@
     <modules>
         <module>api</module>
         <module>element</module>
+        <module>debug</module>
     </modules>
 
     <properties>
         <encoding>UTF-8</encoding>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
-        <elements.version>3.6.0-SNAPSHOT</elements.version>
+        <elements.version>3.7.0-SNAPSHOT</elements.version>
+        <swagger.version>2.2.22</swagger.version>
+        <guice.version>7.0.0</guice.version>
+        <rs.api>4.0.0</rs.api>
+        <jakarta.websocket.version>2.1.0</jakarta.websocket.version>
+        <crossfire.version>1.0.4</crossfire.version>
+        <servlet.api>6.1.0</servlet.api>
+        <logback.version>1.2.3</logback.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
+    <!--
+        Everything in dependencyManagement serves the purpose of centralizing the versions and configurations of
+        artifacts used. Every project will refer to this section when including them on the classpath. This is
+        configured this way to deliberately avoid confusion over what should be scoped properly.
+    -->
     <dependencyManagement>
         <dependencies>
 
-            <!-- Inter-project dependencies -->
+            <!--
+                The BOM for Namazu Elements incorporates all the official SDK packages. The packages are provided
+                with correct scope and version matching the requested version.
+            -->
+
+            <dependency>
+                <groupId>dev.getelements.elements</groupId>
+                <artifactId>sdk-bom</artifactId>
+                <version>${elements.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <!--
+                The Element's API and Implementation. Note that the API is provided meaning that it will not be packaged
+                directly with the Element. Rather it will be added to the bundle as an API dependency. This is important
+                when exporting the Element's interfaces to other Elements within the system.
+            -->
+
             <dependency>
                 <groupId>com.example.element</groupId>
                 <artifactId>api</artifactId>
@@ -32,47 +64,10 @@
                 <scope>provided</scope>
             </dependency>
 
-            <!-- Elements SDK Dependencies Provided by the Core Runtime -->
-            <dependency>
-                <groupId>dev.getelements.elements</groupId>
-                <artifactId>sdk</artifactId>
-                <version>${elements.version}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>dev.getelements.elements</groupId>
-                <artifactId>sdk-local</artifactId>
-                <version>${elements.version}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>dev.getelements.elements</groupId>
-                <artifactId>sdk-local-maven</artifactId>
-                <version>${elements.version}</version>
-                <scope>provided</scope>
-            </dependency>
-
-            <!-- Element Dependencies Provided by the Element -->
-
             <dependency>
                 <groupId>com.example.element</groupId>
                 <artifactId>element</artifactId>
                 <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>dev.getelements.elements</groupId>
-                <artifactId>sdk-spi</artifactId>
-                <version>${elements.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>dev.getelements.elements</groupId>
-                <artifactId>sdk-spi-guice</artifactId>
-                <version>${elements.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>dev.getelements.elements</groupId>
-                <artifactId>sdk-logback</artifactId>
-                <version>${elements.version}</version>
             </dependency>
 
         </dependencies>

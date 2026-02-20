@@ -13,375 +13,71 @@
     <artifactId>element</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+    <!--
+        This includes a variety of dependencies which the Element uses. An Element may use some or all of these. Note
+        that we do not specify version, nor wo we specify the scope. By including the bom in the parent project,
+        you do not have to worry about scope. Our bom properly scopes all dependencies as to avoid runtime errors when
+        deploying your Element.
+    -->
     <dependencies>
-        <!-- Project Dependencies -->
-
-        <!--
-        With Elements 3.3 and higher, the Element must provide the SPI in the distribution. Currently, the only SPI we
-        provide is the Guice based SPI and it contains some specifics which wire up the services within the Element
-        itself.
-        -->
-
+        <!-- The Element's API Artifact. This must be included in all artifacts -->
+        <dependency>
+            <groupId>com.example.element</groupId>
+            <artifactId>api</artifactId>
+        </dependency>
+        <!-- The SDK Artifact. This is the core SDK for Namazu Elements -->
         <dependency>
             <groupId>dev.getelements.elements</groupId>
-            <artifactId>sdk-spi</artifactId>
+            <artifactId>sdk</artifactId>
         </dependency>
+        <!-- The Model Artifact. This contains all models used by the services and database objects. -->
+        <dependency>
+            <groupId>dev.getelements.elements</groupId>
+            <artifactId>sdk-model</artifactId>
+        </dependency>
+        <!-- The Service artifact. Contains all business logic of Namazu Elements.-->
+        <dependency>
+            <groupId>dev.getelements.elements</groupId>
+            <artifactId>sdk-service</artifactId>
+        </dependency>
+        <!-- The Guice loader SPI -->
         <dependency>
             <groupId>dev.getelements.elements</groupId>
             <artifactId>sdk-spi-guice</artifactId>
         </dependency>
+        <!-- The Jakarta RS Support-->
         <dependency>
             <groupId>dev.getelements.elements</groupId>
-            <artifactId>sdk-logback</artifactId>
+            <artifactId>sdk-jakarta-rs</artifactId>
         </dependency>
-
+        <!-- Guice. The version recommended and tested with Namazu Elements -->
         <dependency>
             <groupId>com.google.inject</groupId>
             <artifactId>guice</artifactId>
-            <version>${guice.version}</version>
         </dependency>
-
+        <!-- Jakarta RS. REST API Support. Only include if you want RESTFul APIs in your Element -->
         <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <version>${logback.version}</version>
+            <groupId>jakarta.ws.rs</groupId>
+            <artifactId>jakarta.ws.rs-api</artifactId>
         </dependency>
-
-        <dependency>
-            <groupId>dev.getelements.elements</groupId>
-            <artifactId>sdk-local-maven</artifactId>
-        </dependency>
-
-        <!-- Provided Dependencies -->
-
-        <dependency>
-            <groupId>com.example.element</groupId>
-            <artifactId>api</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>dev.getelements.elements</groupId>
-            <artifactId>sdk-local</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
+        <!-- Jakarta WS. WebSocket Support. Only include if you want WebSockets in your Element -->
         <dependency>
             <groupId>jakarta.websocket</groupId>
             <artifactId>jakarta.websocket-api</artifactId>
-            <version>${jakarta.websocket.version}</version>
-            <scope>provided</scope>
         </dependency>
+        <!-- Swagger Annotations for API Documentation. -->
         <dependency>
-            <groupId>com.example.element</groupId>
-            <artifactId>api</artifactId>
-            <scope>provided</scope>
+            <groupId>io.swagger.core.v3</groupId>
+            <artifactId>swagger-annotations</artifactId>
         </dependency>
-
-        <!-- Swagger Core for Jakarta namespace -->
+        <!-- Jakarta RS Supoport for you REST APIs -->
         <dependency>
             <groupId>io.swagger.core.v3</groupId>
             <artifactId>swagger-jaxrs2-jakarta</artifactId>
-            <version>${swagger.version}</version>
-
-            <!-- Avoid conflicts with parent dependencies -->
-            <exclusions>
-                <exclusion>
-                    <groupId>com.fasterxml.jackson.core</groupId>
-                    <artifactId>jackson-databind</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.fasterxml.jackson.core</groupId>
-                    <artifactId>jackson-annotations</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
-
-        <!-- Annotations like @Operation, @Schema. Provided by Elements Core -->
-        <dependency>
-            <groupId>io.swagger.core.v3</groupId>
-            <artifactId>swagger-annotations-jakarta</artifactId>
-            <version>${swagger.version}</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <!-- Programmatic configuration and contexts -->
-        <dependency>
-            <groupId>io.swagger.core.v3</groupId>
-            <artifactId>swagger-integration-jakarta</artifactId>
-            <version>${swagger.version}</version>
-            <scope>provided</scope>
-        </dependency>
-
     </dependencies>
 
-    <profiles>
-        <profile>
-            <id>namazu-crossfire</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <dependencies>
-                <dependency>
-                    <groupId>dev.getelements.elements.crossfire</groupId>
-                    <artifactId>server</artifactId>
-                    <version>${crossfire.version}</version>
-                    <scope>provided</scope>
-                </dependency>
-                <dependency>
-                    <groupId>dev.getelements.elements.crossfire</groupId>
-                    <artifactId>server</artifactId>
-                    <version>${crossfire.version}</version>
-                    <classifier>element</classifier>
-                    <scope>provided</scope>
-                </dependency>
-            </dependencies>
-            <build>
-                <plugins>
-                    <!--
-                    We will likely remove this approach in the future as it has the potential to create classpath pollution.
-                    In order to do so, we need to add more granularity to the SDK loader to allow for more flexible loading.
-                    -->
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-dependency-plugin</artifactId>
-                        <version>3.6.0</version>
-                        <executions>
-                            <execution>
-                                <id>copy-crossfire-libs</id>
-                                <phase>generate-resources</phase>
-                                <goals>
-                                    <goal>copy-dependencies</goal>
-                                </goals>
-                                <configuration>
-                                    <includeScope>provided</includeScope>
-                                    <prependGroupId>true</prependGroupId>
-                                    <includeGroupIds>dev.getelements.elements.crossfire</includeGroupIds>
-                                    <includeArtifactIds>server</includeArtifactIds>
-                                    <excludeClassifiers>element</excludeClassifiers>
-                                    <outputDirectory>${project.build.directory}/element-libs</outputDirectory>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <!--
-                    This makes the Crossfire element show up in a distribution built with this profile.
-                    -->
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-dependency-plugin</artifactId>
-                        <version>3.6.0</version>
-                        <executions>
-                            <execution>
-                                <id>copy-crossfire-element</id>
-                                <phase>generate-resources</phase>
-                                <goals>
-                                    <goal>copy-dependencies</goal>
-                                </goals>
-                                <configuration>
-                                    <includeScope>provided</includeScope>
-                                    <prependGroupId>true</prependGroupId>
-                                    <includeGroupIds>dev.getelements.elements.crossfire</includeGroupIds>
-                                    <includeArtifactIds>server</includeArtifactIds>
-                                    <includeClassifiers>element</includeClassifiers>
-                                    <outputDirectory>${element.target.dir}/dev.getelements.elements.crossfire.server/lib</outputDirectory>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
-
-    <build>
-        <plugins>
-
-            <!--
-            The new SDK loader will automatically copy the dependencies of the Element to an expected path on disk
-            where it will be loaded in an isolated classpath similar to how the Element is loaded in the production
-            environment.
-
-            When deploying the Element, the dependencies will are all copied neatly to the `element-libs` directory
-            where they can be deployed alongside the Element JAR file or compiled classes.
-
-            We will likely remove this approach in the future as it has the potential to create classpath pollution.
-            In order to do so, we need to add more granularity to the SDK loader to allow for more flexible loading.
-             -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <version>3.6.0</version>
-                <executions>
-                    <execution>
-                        <id>copy-element-deps</id>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>copy-dependencies</goal>
-                        </goals>
-                        <configuration>
-                            <prependGroupId>true</prependGroupId>
-                            <excludeScope>provided</excludeScope>
-                            <excludeGroupIds>ch.qos.logback</excludeGroupIds>
-                            <excludeArtifactIds>sdk-local,sdk-local-maven,sdk-logback</excludeArtifactIds>
-                            <outputDirectory>${project.build.directory}/element-libs</outputDirectory>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <!--
-            This makes a complete ready-to-deploy copy of your Element's compiled code. In future releases, we will
-            make this process easier and more strealined and deprecate the approach in the above steps.
-            -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <version>3.1.0</version>
-                <executions>
-                    <execution>
-                        <id>copy-element-build</id>
-                        <phase>process-classes</phase>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <configuration>
-                            <target>
-                                <copy todir="${element.distribution.dir}/classpath">
-                                    <fileset dir="${project.build.directory}/classes" />
-                                </copy>
-                            </target>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <!-- Ensures that anything in src/main/resources ends up in the Elements classpath -->
-            <plugin>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>3.3.1</version>
-                <executions>
-                    <execution>
-                        <id>copy-element-resources</id>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${element.distribution.dir}/classpath</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>src/main/resources</directory>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <!-- Ensures all libraries end up in the Element's code -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <version>3.6.0</version>
-                <executions>
-                    <execution>
-                        <id>copy-element-dependencies</id>
-                        <phase>process-classes</phase>
-                        <goals>
-                            <goal>copy-dependencies</goal>
-                        </goals>
-                        <configuration>
-                            <prependGroupId>true</prependGroupId>
-                            <excludeScope>provided</excludeScope>
-                            <excludeGroupIds>ch.qos.logback,dev.getelements.elements.crossfire</excludeGroupIds>
-                            <excludeArtifactIds>sdk-local,sdk-local-maven,sdk-logback</excludeArtifactIds>
-                            <outputDirectory>${element.distribution.dir}/lib</outputDirectory>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <!-- Copies all dependencies to the library path -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <version>3.6.0</version>
-                <executions>
-                    <execution>
-                        <id>copy-element-dependencies</id>
-                        <phase>process-classes</phase>
-                        <goals>
-                            <goal>copy-dependencies</goal>
-                        </goals>
-                        <configuration>
-                            <prependGroupId>true</prependGroupId>
-                            <excludeScope>provided</excludeScope>
-                            <excludeGroupIds>ch.qos.logback,dev.getelements.elements.crossfire</excludeGroupIds>
-                            <excludeArtifactIds>sdk-local,sdk-local-maven,sdk-logback</excludeArtifactIds>
-                            <outputDirectory>${element.distribution.dir}/lib</outputDirectory>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <!-- Copies the API from the Element's SDK package -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <version>3.6.0</version>
-                <executions>
-                    <execution>
-                        <id>copy-element-api</id>
-                        <phase>process-classes</phase>
-                        <goals>
-                            <goal>copy-dependencies</goal>
-                        </goals>
-                        <configuration>
-                            <prependGroupId>true</prependGroupId>
-                            <includeScope>provided</includeScope>
-                            <includeGroupIds>${project.groupId}</includeGroupIds>
-                            <includeArtifactIds>api</includeArtifactIds>
-                            <outputDirectory>${element.distribution.dir}/api</outputDirectory>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <version>3.6.0</version>
-                <executions>
-                    <execution>
-                        <id>zip-target-dir</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                        <configuration>
-                            <attach>false</attach>
-                            <appendAssemblyId>false</appendAssemblyId>
-                            <finalName>${project.artifactId}-${project.version}</finalName>
-                            <descriptors>
-                                <descriptor>src/assembly/zip.xml</descriptor>
-                            </descriptors>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-
-    </build>
-
     <properties>
-        <swagger.version>2.2.22</swagger.version>
-        <rs.api>4.0.0</rs.api>
-        <guice.version>7.0.0</guice.version>
-        <crossfire.version>1.0.4</crossfire.version>
-        <servlet.api>6.1.0</servlet.api>
-        <logback.version>1.2.3</logback.version>
-        <jakarta.websocket.version>2.1.0</jakarta.websocket.version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <element.target.dir>${project.build.directory}/element</element.target.dir>
         <element.distribution.dir>${element.target.dir}/${groupId}.${artifactId}</element.distribution.dir>
         <element.distribution.zip>${element.target.dir}/${project.artifactId}-${project.version}.zip</element.distribution.zip>

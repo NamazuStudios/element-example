@@ -1,20 +1,15 @@
 package com.mystudio.mygame;
 
 import com.mystudio.mygame.rest.ExampleContent;
-import com.mystudio.mygame.rest.HelloWorld;
 import com.mystudio.mygame.rest.HelloWithAuthentication;
+import com.mystudio.mygame.rest.HelloWorld;
 import dev.getelements.elements.sdk.annotation.ElementDefaultAttribute;
 import dev.getelements.elements.sdk.annotation.ElementServiceExport;
 import dev.getelements.elements.sdk.annotation.ElementServiceImplementation;
+import io.swagger.v3.jaxrs2.integration.resources.OpenApiResource;
 import jakarta.ws.rs.core.Application;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
-
-// Swagger OpenAPI JAX-RS resource
-import io.swagger.v3.jaxrs2.integration.resources.OpenApiResource;
-import org.glassfish.jersey.server.ServerProperties;
 
 @ElementServiceImplementation
 @ElementServiceExport(Application.class)
@@ -46,13 +41,14 @@ public class HelloWorldApplication extends Application {
         );
     }
 
-    @Override
-    public Map<String,Object> getProperties() {
-        final Map<String,Object> props = new HashMap<>();
-        //We want to use Jackson for our JSON serialization (since it can handle the
-        // Map<String, Object> type that we use for our example model metadata), so
-        // we need to disable MOXy
-        props.put(ServerProperties.MOXY_JSON_FEATURE_DISABLE, true);
-        return props;
-    }
+//    @Override
+//    public Map<String,Object> getProperties() {
+//        final Map<String,Object> props = new HashMap<>();
+//        //We want to use Jackson for our JSON serialization (since it can handle the
+//        // Map<String, Object> type that we use for our example model metadata), so
+//        // we need to disable MOXy
+//        props.put(ServerProperties.MOXY_JSON_FEATURE_DISABLE, true);
+//        return props;
+//    }
+
 }
