@@ -31,7 +31,7 @@
               <goal>jar</goal>
             </goals>
             <configuration>
-              <classifier>element-api</classifier>
+              <classifier>${api.classifier}</classifier>
             </configuration>
           </execution>
         </executions>
