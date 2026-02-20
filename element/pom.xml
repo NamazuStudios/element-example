@@ -79,9 +79,6 @@
     </dependencies>
 
     <properties>
-        <element.target.dir>${project.build.directory}/element</element.target.dir>
-        <element.distribution.dir>${element.target.dir}/${groupId}.${artifactId}</element.distribution.dir>
-        <element.distribution.zip>${element.target.dir}/${project.artifactId}-${project.version}.zip</element.distribution.zip>
         <elm.staging.dir>${project.build.directory}/${project.groupId}.${project.artifactId}-${project.version}</elm.staging.dir>
     </properties>
 
