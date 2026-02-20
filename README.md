@@ -35,7 +35,47 @@ Going forward, every major and minor release will be kept in its own branch so t
 
 ---
 
+## Starting from Maven Archetype (3.7 and Later)
 
+As of 3.7, the fastest way to start a new Element project is with the official [Maven Archetype](https://maven.apache.org/guides/introduction/introduction-to-archetypes.html). The archetype `sdk-standard-element` from the `dev.getelements.elements` group generates a skeleton multi-module Element project using the same structure as the example code in this repository.
+
+Run the following command to generate a new project interactively:
+
+```bash
+mvn archetype:generate \
+  -DarchetypeGroupId=dev.getelements.elements \
+  -DarchetypeArtifactId=sdk-standard-element \
+  -DarchetypeVersion=3.7.0-SNAPSHOT
+```
+
+Maven will prompt you for the standard coordinates (`groupId`, `artifactId`, `version`, `package`) plus one additional parameter specific to this archetype:
+
+| Parameter | Description |
+|---|---|
+| `groupId` | The Maven group ID for your Element (e.g. `com.mystudio.mygame`) |
+| `artifactId` | The Maven artifact ID for your Element (e.g. `my-element`) |
+| `version` | Your project version (e.g. `1.0-SNAPSHOT`) |
+| `package` | The root Java package for generated source files |
+| `elementsVersion` | The Namazu Elements version to target (e.g. `3.7.0-SNAPSHOT`) |
+
+To generate non-interactively, supply all parameters on the command line:
+
+```bash
+mvn archetype:generate \
+  -DarchetypeGroupId=dev.getelements.elements \
+  -DarchetypeArtifactId=sdk-standard-element \
+  -DarchetypeVersion=3.7.0-SNAPSHOT \
+  -DgroupId=com.mystudio.mygame \
+  -DartifactId=my-element \
+  -Dversion=1.0-SNAPSHOT \
+  -Dpackage=com.mystudio.mygame \
+  -DelementsVersion=3.7.0-SNAPSHOT \
+  -DinteractiveMode=false
+```
+
+The generated project is a ready-to-build starting point. From there, refer to the rest of this README and the example code in this repository as a reference for adding endpoints, Guice modules, services, and other features.
+
+---
 
 ## Setup
 
