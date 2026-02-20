@@ -15,7 +15,7 @@ public class DebugLocalElement {
                         .elementPath()
                             .addSpiBuiltin("GUICE_7_0_0")
                             .addApiArtifact("com.example.element:api:1.0-SNAPSHOT")
-                            .addElementArtifact("com.example.element:api:1.0-SNAPSHOT")
+                            .addElementArtifact("com.example.element:element:1.0-SNAPSHOT")
                         .endElementPath()
                         .build()
                 )
