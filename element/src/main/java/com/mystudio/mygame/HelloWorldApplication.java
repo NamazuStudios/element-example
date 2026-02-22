@@ -41,14 +41,4 @@ public class HelloWorldApplication extends Application {
         );
     }
 
-//    @Override
-//    public Map<String,Object> getProperties() {
-//        final Map<String,Object> props = new HashMap<>();
-//        //We want to use Jackson for our JSON serialization (since it can handle the
-//        // Map<String, Object> type that we use for our example model metadata), so
-//        // we need to disable MOXy
-//        props.put(ServerProperties.MOXY_JSON_FEATURE_DISABLE, true);
-//        return props;
-//    }
-
 }
