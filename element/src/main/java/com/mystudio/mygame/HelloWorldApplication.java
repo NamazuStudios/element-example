@@ -29,15 +29,15 @@ public class HelloWorldApplication extends Application {
     @Override
     public Set<Class<?>> getClasses() {
         return Set.of(
-
                 //Endpoints
                 HelloWorld.class,
                 HelloWithAuthentication.class,
                 ExampleContent.class,
 
-                //Required if you want codegen to work for this
-                OpenApiResource.class,
+                // Exposes the default security rules for the API. Assumes you are using the builtin Elements auth
+                // system by setting `dev.getelements.elements.auth.enabled` to true in the annotation above.
                 OpenAPISecurityConfig.class
+
         );
     }
 
