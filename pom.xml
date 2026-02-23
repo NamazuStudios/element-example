@@ -28,6 +28,7 @@
         <servlet.api>6.1.0</servlet.api>
         <logback.version>1.2.3</logback.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.build.timestamp.format>yyyy-MM-dd'T'HH:mm:ss'Z'</maven.build.timestamp.format>
         <api.classifier>${project.groupId}.api</api.classifier>
     </properties>
 

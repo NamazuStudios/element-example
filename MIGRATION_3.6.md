@@ -76,6 +76,7 @@ Move any version properties that were previously declared in `element/pom.xml` u
     <guice.version>7.0.0</guice.version>
     <rs.api>4.0.0</rs.api>
     <jakarta.websocket.version>2.1.0</jakarta.websocket.version>
+    <maven.build.timestamp.format>yyyy-MM-dd'T'HH:mm:ss'Z'</maven.build.timestamp.format>
     <!-- … -->
 </properties>
 ```
@@ -151,20 +152,23 @@ The old approach (Maven Assembly Plugin + `zip.xml`) is replaced by a structured
 
 ```
 <groupId>.<artifactId>-<version>.elm  (zip file)
-├── api/        ← classified API jars exported to other Elements
-├── lib/        ← runtime (non-provided) dependency jars
-└── classpath/  ← compiled classes + src/main/resources contents
+└── <groupId>.<artifactId>/
+    ├── dev.getelements.element.manifest.properties  ← build metadata
+    ├── api/        ← classified API jars exported to other Elements
+    ├── lib/        ← runtime (non-provided) dependency jars
+    └── classpath/  ← compiled classes + src/main/resources contents
 ```
 
 ### element/pom.xml — new build section
 
-Add a staging directory property and three plugin executions:
+Add staging directory properties and four plugin executions:
 
 ```xml
 <properties>
     <elm.staging.dir>
         ${project.build.directory}/${project.groupId}.${project.artifactId}-${project.version}
     </elm.staging.dir>
+    <elm.element.dir>${elm.staging.dir}/${project.groupId}.${project.artifactId}</elm.element.dir>
 </properties>
 
 <build>
@@ -181,7 +185,7 @@ Add a staging directory property and three plugin executions:
                     <phase>prepare-package</phase>
                     <goals><goal>copy-dependencies</goal></goals>
                     <configuration>
-                        <outputDirectory>${elm.staging.dir}/api</outputDirectory>
+                        <outputDirectory>${elm.element.dir}/api</outputDirectory>
                         <includeGroupIds>${project.groupId}</includeGroupIds>
                         <includeClassifiers>${api.classifier}</includeClassifiers>
                         <prependGroupId>true</prependGroupId>
@@ -193,7 +197,7 @@ Add a staging directory property and three plugin executions:
                     <phase>prepare-package</phase>
                     <goals><goal>copy-dependencies</goal></goals>
                     <configuration>
-                        <outputDirectory>${elm.staging.dir}/lib</outputDirectory>
+                        <outputDirectory>${elm.element.dir}/lib</outputDirectory>
                         <excludeScope>provided</excludeScope>
                         <prependGroupId>true</prependGroupId>
                     </configuration>
@@ -201,7 +205,7 @@ Add a staging directory property and three plugin executions:
             </executions>
         </plugin>
 
-        <!-- 2. Stage classes/resources and zip into .elm -->
+        <!-- 2. Stage classes/resources, write manifest, and zip into .elm -->
         <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-antrun-plugin</artifactId>
@@ -213,14 +217,37 @@ Add a staging directory property and three plugin executions:
                     <goals><goal>run</goal></goals>
                     <configuration>
                         <target>
-                            <copy todir="${elm.staging.dir}/classpath" failonerror="false">
+                            <copy todir="${elm.element.dir}/classpath" failonerror="false">
                                 <fileset dir="${project.build.outputDirectory}"
                                          erroronmissingdir="false" includes="**/*"/>
                             </copy>
-                            <copy todir="${elm.staging.dir}/classpath" failonerror="false">
+                            <copy todir="${elm.element.dir}/classpath" failonerror="false">
                                 <fileset dir="${basedir}/src/main/resources"
                                          erroronmissingdir="false" includes="**/*"/>
                             </copy>
+                        </target>
+                    </configuration>
+                </execution>
+                <!-- Write build metadata into the element manifest -->
+                <execution>
+                    <id>elm-write-manifest</id>
+                    <phase>prepare-package</phase>
+                    <goals><goal>run</goal></goals>
+                    <configuration>
+                        <target>
+                            <mkdir dir="${elm.element.dir}"/>
+                            <exec executable="git" outputproperty="git.revision"
+                                  failifexecutionfails="false" errorproperty="git.error">
+                                <arg value="rev-parse"/>
+                                <arg value="HEAD"/>
+                            </exec>
+                            <property name="git.revision" value="unknown"/>
+                            <echo file="${elm.element.dir}/dev.getelements.element.manifest.properties"
+                                  append="false">Element-Version=${project.version}
+Element-Build-Time=${maven.build.timestamp}
+Element-Revision=${git.revision}
+Element-Builtin-Spis=DEFAULT
+</echo>
                         </target>
                     </configuration>
                 </execution>
@@ -230,9 +257,9 @@ Add a staging directory property and three plugin executions:
                     <goals><goal>run</goal></goals>
                     <configuration>
                         <target>
-                            <mkdir dir="${elm.staging.dir}/api"/>
-                            <mkdir dir="${elm.staging.dir}/lib"/>
-                            <mkdir dir="${elm.staging.dir}/classpath"/>
+                            <mkdir dir="${elm.element.dir}/api"/>
+                            <mkdir dir="${elm.element.dir}/lib"/>
+                            <mkdir dir="${elm.element.dir}/classpath"/>
                             <zip destfile="${elm.staging.dir}.elm" basedir="${elm.staging.dir}"/>
                         </target>
                     </configuration>
@@ -382,6 +409,7 @@ If your `element/pom.xml` contains a `<profile>` block for `namazu-crossfire` (u
 - [ ] *(optional)* Add `api.classifier` property and classified-api entries to root `pom.xml` — only needed to export types to other Elements
 - [ ] *(optional)* Add `maven-jar-plugin` classified-jar execution to `api/pom.xml`
 - [ ] Remove `element/src/assembly/zip.xml` and old assembly/antrun/distribution plugin config from `element/pom.xml`
+- [ ] Add `maven.build.timestamp.format` property to root `pom.xml`
 - [ ] Add ELM archive build (dependency-plugin + antrun + build-helper) to `element/pom.xml`
 - [ ] *(optional)* Add classified API dependency to `element/pom.xml` — only needed if `api` module exists
 - [ ] Delete `element/src/test/java/Main.java`
