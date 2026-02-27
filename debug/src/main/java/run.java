@@ -1,9 +1,6 @@
 import dev.getelements.elements.sdk.local.ElementsLocalBuilder;
 
 import java.io.IOException;
-import java.util.Properties;
-
-import static dev.getelements.elements.sdk.model.Constants.HTTP_PORT;
 
 /**
  * Runs your local Element in the SDK.

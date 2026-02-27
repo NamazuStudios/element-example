@@ -16,7 +16,7 @@ import java.util.Set;
 public class HelloWorldApplication extends Application {
 
     @ElementDefaultAttribute("true")
-    public static final String APPLICATION_NAME = "dev.getelements.elements.auth.enabled";
+    public static final String AUTH_ENABLED = "dev.getelements.elements.auth.enabled";
 
     @ElementDefaultAttribute("example-element")
     public static final String APPLICATION_PREFIX = "dev.getelements.elements.app.serve.prefix";

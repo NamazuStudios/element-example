@@ -19,7 +19,7 @@
         <encoding>UTF-8</encoding>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
-        <elements.version>3.7.0-SNAPSHOT</elements.version>
+        <elements.version>3.7.10-SNAPSHOT</elements.version>
         <swagger.version>2.2.22</swagger.version>
         <guice.version>7.0.0</guice.version>
         <rs.api>4.0.0</rs.api>
@@ -31,6 +31,18 @@
         <maven.build.timestamp.format>yyyy-MM-dd'T'HH:mm:ss'Z'</maven.build.timestamp.format>
         <api.classifier>${project.groupId}.api</api.classifier>
     </properties>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>3.4.2</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
 
     <!--
         Everything in dependencyManagement serves the purpose of centralizing the versions and configurations of
