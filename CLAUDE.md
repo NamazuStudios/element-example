@@ -109,8 +109,57 @@ For database access, see **[MORPHIA.md](MORPHIA.md)**. It covers `Transaction`, 
 
 ## Static & UI Content
 
-- **`element/src/main/static/`** — static file content served by the Element
-- **`element/src/main/ui/`** — UI plugin content served by the Element
+- **`element/src/main/static/`** — static files served at `/app/static/{prefix}/`
+- **`element/src/main/ui/`** — UI plugin files served at `/app/ui/{prefix}/`
+
+The Maven build (antrun `elm-stage-static-content`) copies both directories into the `.elm` archive automatically. No extra configuration is needed to serve files — just place them in the right source directory.
+
+### Controlling Static Serving with Attributes
+
+The `StaticRuleEngine` reads the following keys from the Element's attributes (namespace is `static` or `ui` depending on the tree):
+
+| Attribute key | Purpose | Default |
+|---------------|---------|---------|
+| `dev.getelements.static.index` | File served at the context root | `index.html` |
+| `dev.getelements.static.rule.<name>.regex` | Regex rule matching file paths | — |
+| `dev.getelements.static.rule.<name>.header.<Header>.value` | Response header template for matched files | — |
+| `dev.getelements.static.error.<code>` | File served for HTTP error code (e.g. `404`) | — |
+| `dev.getelements.ui.index` | Same as above for the `ui` tree | `index.html` |
+| `dev.getelements.ui.rule.<name>.regex` | Same as above for the `ui` tree | — |
+| `dev.getelements.ui.rule.<name>.header.<Header>.value` | Same as above for the `ui` tree | — |
+| `dev.getelements.ui.error.<code>` | Same as above for the `ui` tree | — |
+| `dev.getelements.element.static.uri` | Override the full serve URI for standard content | `/app/static/{prefix}` |
+| `dev.getelements.element.ui.uri` | Override the full serve URI for UI content | `/app/ui/{prefix}` |
+
+Header value templates support: `$filename`, `$path`, `$[0]` (full match), `$[N]` (capture group N).
+
+**Example** — add a `Cache-Control` header to all `.js` files and define a 404 page:
+```properties
+dev.getelements.static.rule.scripts.regex=.*\\.js
+dev.getelements.static.rule.scripts.header.Cache-Control.value=public, max-age=31536000
+dev.getelements.static.error.404=errors/404.html
+```
+
+### Embedding Attributes in the ELM
+
+The loader reads `dev.getelements.element.attributes.properties` from the **element root** inside the `.elm` archive (same level as `api/`, `lib/`, `classpath/`, and the manifest).
+
+Place your attributes file at:
+```
+element/src/main/elm/dev.getelements.element.attributes.properties
+```
+
+Then add an antrun copy step to `element/pom.xml` inside the `elm-stage-classpath` execution (or as its own execution in `prepare-package`) to stage it to the element root:
+
+```xml
+<copy todir="${elm.element.dir}" failonerror="false">
+    <fileset dir="${basedir}/src/main/elm" erroronmissingdir="false" includes="**/*"/>
+</copy>
+```
+
+This places the file at `<groupId>.<artifactId>/dev.getelements.element.attributes.properties` inside the ZIP, which is the path `DirectoryElementPathLoader` expects.
+
+> `@ElementDefaultAttribute` on static fields in your Java classes provides defaults for any key — the attributes file overrides them at deploy time without recompiling.
 
 ## Custom APIs
 
