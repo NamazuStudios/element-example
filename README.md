@@ -218,6 +218,8 @@ Try out GET http://localhost:8080/app/rest/example-element/helloworld
 
 # Further Reading
 
+- **[MORPHIA.md](MORPHIA.md)** — How to use the MongoDB/Morphia database layer inside a custom Element (Transactions, DAOs, `Datastore`, `@ElementTypeRequest`)
+
 Elements uses two standard APIs for the inbound/outbound communication. Jakarta WebSocket and Jakarta RESTful Web Services. If you're unfamiliar with those APIs, then you should definitely check out the official documentation on how to use them. We've linked several great resources below to get you started.
 
 - [Jakarta RESTful Web Services Home Page](https://jakarta.ee/specifications/restful-ws/4.0/)
