@@ -18,11 +18,9 @@ public class run {
                 .withSourceRoot()
                 .withDeployment(builder -> builder
                         .useDefaultRepositories(true)
-                        .elementPath()
-                            .addSpiBuiltin("DEFAULT")
-                            .addApiArtifact("com.example.element:api:1.0-SNAPSHOT")
-                            .addElementArtifact("com.example.element:element:1.0-SNAPSHOT")
-                        .endElementPath()
+                        .elementPackage()
+                        .elmArtifact("com.example.element:element:elm:1.0-SNAPSHOT")
+                        .endElementPackage()
                         .build()
                 )
                 .build();
