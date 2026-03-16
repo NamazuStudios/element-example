@@ -18,8 +18,8 @@ public class HelloWorldApplication extends Application {
     @ElementDefaultAttribute("true")
     public static final String AUTH_ENABLED = "dev.getelements.elements.auth.enabled";
 
-    @ElementDefaultAttribute("example-element")
-    public static final String APPLICATION_PREFIX = "dev.getelements.elements.app.serve.prefix";
+    @ElementDefaultAttribute("/element/example/api")
+    public static final String RS_ROOT = "dev.getelements.elements.rs.root";
 
     public static final String OPENAPI_TAG = "Example";
 
