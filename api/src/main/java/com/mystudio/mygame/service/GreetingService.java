@@ -1,7 +1,5 @@
 package com.mystudio.mygame.service;
 
-import dev.getelements.elements.sdk.annotation.ElementServiceExport;
-
 public interface GreetingService {
 
     /**
