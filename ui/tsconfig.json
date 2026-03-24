@@ -10,5 +10,5 @@
     "strict": true,
     "skipLibCheck": true
   },
-  "include": ["src", "vite.base.config.ts", "vite.superuser.config.ts", "vite.user.config.ts"]
+  "include": ["src", "vite.base.config.ts", "vite.superuser.config.ts", "vite.user.config.ts", "tailwind.config.ts", "postcss.config.ts"]
 }
