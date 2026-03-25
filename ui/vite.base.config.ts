@@ -6,9 +6,21 @@ export function createConfig(segment: string) {
     if (command === 'serve') {
       // Standalone dev server — renders the component in isolation with HMR.
       // Run via: npm run dev:superuser  or  npm run dev:user
+      //
+      // API calls are proxied to the running Elements instance so that relative
+      // paths like /api/rest/version resolve correctly regardless of the dev
+      // server port. Override the target with the ELEMENTS_URL env var:
+      //   ELEMENTS_URL=http://localhost:9090 npm run dev:superuser
+      const elementsUrl = process.env.ELEMENTS_URL ?? 'http://localhost:8080'
       return {
         plugins: [react({ jsxRuntime: 'classic' })],
         root: `src/${segment}`,
+        server: {
+          proxy: {
+            '/api': elementsUrl,
+            '/app': elementsUrl,
+          },
+        },
       }
     }
 

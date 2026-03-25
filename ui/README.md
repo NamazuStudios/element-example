@@ -92,6 +92,14 @@ npm run dev:superuser   # or: npm run dev:user
 
 Open `http://localhost:5173` in a browser. Edit `src/superuser/ExamplePlugin.tsx` (or `src/user/ExamplePlugin.tsx`) and the browser updates instantly.
 
+The dev server proxies `/api` and `/app` to the local Elements instance (default `http://localhost:8080`) so that API calls resolve correctly. If your instance runs on a different port, override the target:
+
+```bash
+ELEMENTS_URL=http://localhost:9090 npm run dev:superuser
+```
+
+This proxy only applies during `npm run dev`. The built bundle uses relative paths, which resolve correctly when served by the Elements runtime.
+
 ### Building for integration
 
 When ready to test the component embedded in the actual dashboard, build the bundles:
@@ -131,6 +139,23 @@ ui/src/
 4. Restart the debug server to pick up the new bundle
 
 Shared components (used by both segments) can be placed in `src/shared/` and imported with a relative path.
+
+### Renaming the Element
+
+The Element's serve prefix (`dev.getelements.elements.app.serve.prefix`) appears in several places across the UI plugin. When you rename the Element, update each one:
+
+| What to change | Where | Why |
+|---|---|---|
+| `"route"` in `plugin.json` | `element/src/main/ui/superuser/plugin.json` (and `user/`) | Controls the sidebar URL (`/plugin/{route}`); should match the new name |
+| `"label"` in `plugin.json` | same file | Human-readable sidebar label |
+| `.register('example-element', ...)` in `plugin-entry.ts` | `ui/src/superuser/plugin-entry.ts` (and `user/`) | The route passed here must match the `route` field above |
+
+The dashboard discovers `plugin.json` by fetching `/app/ui/{prefix}/superuser/plugin.json`, so the file is found automatically under the new prefix — no path changes are needed for discovery.
+
+**API calls inside the bundle** behave differently depending on the path used:
+
+- Paths under `/api/rest/…` (platform APIs like `/api/rest/version`) contain no element prefix and are unaffected by renaming.
+- Paths under `/app/rest/{prefix}/…` (your Element's own REST API) embed the prefix and **must be updated** when you rename. Avoid hardcoding these; derive the base URL from the route name at runtime instead.
 
 ### CI and release builds
 
