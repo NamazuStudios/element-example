@@ -54,7 +54,11 @@ build/
 ### Mac OS ###
 .DS_Store
 
-## Directories created by Namazu Elemetns
+## Directories created by Namazu Elements
 /cdn-repos/**
 /script-repos/**
+
+## Frontend build tooling
+/ui/node_modules/
+/ui/.node/
 

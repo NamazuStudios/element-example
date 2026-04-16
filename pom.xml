@@ -11,6 +11,7 @@
 
     <modules>
         <module>api</module>
+        <module>ui</module>
         <module>element</module>
         <module>debug</module>
     </modules>
@@ -19,7 +20,7 @@
         <encoding>UTF-8</encoding>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
-        <elements.version>3.7.20</elements.version>
+        <elements.version>3.8.0</elements.version>
         <swagger.version>2.2.22</swagger.version>
         <guice.version>7.0.0</guice.version>
         <rs.api>4.0.0</rs.api>

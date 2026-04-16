@@ -1,12 +1,13 @@
 # CLAUDE.md — element-example
 
-This is a reference/example project for **Namazu Elements 3.7**, demonstrating how to build a custom Element using the multi-module Maven structure, REST endpoints, Guice DI, and the `.elm` archive format.
+This is a reference/example project for **Namazu Elements 3.8**, demonstrating how to build a custom Element using the multi-module Maven structure, REST endpoints, Guice DI, and the `.elm` archive format.
 
 ## Project Structure
 
 ```
 element-example/
 ├── api/          # Exported interfaces (other Elements depend on this)
+├── ui/           # TypeScript/React UI plugin source (Vite; not deployed directly)
 ├── element/      # Implementation module — builds the .elm archive
 ├── debug/        # Local development runner (not deployed)
 └── services-dev/ # Docker services (MongoDB) for local dev
@@ -14,6 +15,7 @@ element-example/
 
 **Module roles:**
 - `api` — Pure interfaces + DTOs exported to other Elements via a classified JAR
+- `ui` — Vite/TypeScript source for dashboard UI plugins; builds IIFE bundles into `element/src/main/ui/`
 - `element` — REST endpoints, services, Guice modules; compiles to `.elm` archive
 - `debug` — Local Elements runtime harness; never deployed
 
@@ -106,6 +108,111 @@ For database access, see **[MORPHIA.md](MORPHIA.md)**. It covers `Transaction`, 
 | `Element.publish(Event)` | Broadcast events to other Elements |
 | `User.Level.UNPRIVILEGED` | Sentinel for unauthenticated/guest users |
 | `AuthSchemes.SESSION_SECRET` | Header name for session auth (`"session_secret"`) |
+
+## Dashboard UI Plugins
+
+Elements can inject custom pages into the Elements dashboard by shipping a React component bundle alongside the Java code. The dashboard discovers these bundles at runtime via a `plugin.json` manifest — no dashboard changes required.
+
+### How it works
+
+The manifest and bundle are placed in the Element's UI content directory under a named segment:
+
+```
+element/src/main/ui/
+  superuser/
+    plugin.json        # declares sidebar entry and bundle location
+    plugin.bundle.js   # self-contained IIFE bundle (built from ui/ module)
+  user/
+    plugin.json
+    plugin.bundle.js
+```
+
+These are packaged into the `.elm` artifact at build time and served under `/app/ui/{element-prefix}/{segment}/`.
+
+### plugin.json
+
+```json
+{
+  "schema": "1",
+  "entries": [
+    {
+      "label": "Example Element",
+      "icon": "Package",
+      "bundlePath": "plugin.bundle.js",
+      "route": "example-element"
+    }
+  ]
+}
+```
+
+| Field | Description |
+|---|---|
+| `label` | Text shown in the dashboard sidebar |
+| `icon` | A [Lucide](https://lucide.dev/icons/) icon name (e.g. `Package`, `Layers`, `Zap`) |
+| `bundlePath` | Path to the bundle, relative to the manifest |
+| `route` | Unique key used in the dashboard URL (`/plugin/{route}`) |
+
+### Bundle format
+
+The bundle must be an IIFE that registers a React component with the dashboard's plugin registry. The host dashboard exposes `window.React` — the bundle must use this same instance.
+
+```js
+(function () {
+  var React = window.React;
+  function MyPlugin() {
+    return React.createElement('div', { className: 'p-6' }, 'My Plugin');
+  }
+  window.__elementsPlugins && window.__elementsPlugins.register('my-route', MyPlugin);
+})();
+```
+
+Tailwind utility classes work out of the box — the dashboard stylesheet is already loaded.
+
+### Developing the UI (`ui/` module)
+
+The `ui/` Maven module is a Vite/TypeScript project that builds the IIFE bundles and writes them directly into `element/src/main/ui/{segment}/`.
+
+**One-time setup:**
+```bash
+cd ui
+npm install
+```
+
+**Standalone dev server (fast iteration):**
+```bash
+npm run dev:superuser   # or: npm run dev:user
+# Open http://localhost:5173
+```
+
+Edit `src/superuser/ExamplePlugin.tsx` and the browser updates instantly.
+
+**Build for integration:**
+```bash
+npm run build
+```
+
+Writes `plugin.bundle.js` into `element/src/main/ui/superuser/` and `element/src/main/ui/user/`. Then restart the debug server to pick up the new bundle.
+
+**Source layout:**
+```
+ui/src/
+  superuser/
+    ExamplePlugin.tsx    # edit this — the component shown in the dashboard
+    plugin-entry.ts      # registers the component with window.__elementsPlugins
+    dev-entry.tsx        # mounts component for standalone dev (not shipped)
+    index.html           # dev server entry point (not shipped)
+  user/                  # same structure
+  shared/                # optional: components shared between segments
+```
+
+**CI / Maven build** — activate the `build-ui` profile to run npm via Maven (uses `frontend-maven-plugin`; off by default):
+```bash
+mvn install -Pbuild-ui
+```
+
+### User segmentation
+
+`superuser/` serves components shown to administrators. `user/` serves components in user-facing dashboards (future). Each segment is discovered independently.
 
 ## Static & UI Content
 

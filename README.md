@@ -216,6 +216,14 @@ Try out GET http://localhost:8080/app/rest/example-element/helloworld
 > [!Note]
 > The `example-element` portion of the URL is determined by the `dev.getelements.elements.app.serve.prefix` value in the `dev.getelements.element.attributes.properties` file in the deployment project.
 
+---
+
+## Dashboard UI Plugins
+
+Elements can inject custom pages into the Elements dashboard by shipping a React component bundle alongside the Element's Java code. See **[ui/README.md](ui/README.md)** for the full guide.
+
+---
+
 # Further Reading
 
 - **[MORPHIA.md](MORPHIA.md)** — How to use the MongoDB/Morphia database layer inside a custom Element (Transactions, DAOs, `Datastore`, `@ElementTypeRequest`)

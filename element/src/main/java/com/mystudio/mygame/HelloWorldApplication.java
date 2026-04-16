@@ -18,11 +18,17 @@ public class HelloWorldApplication extends Application {
     @ElementDefaultAttribute("true")
     public static final String AUTH_ENABLED = "dev.getelements.elements.auth.enabled";
 
-    @ElementDefaultAttribute("/element/example/api")
+    @ElementDefaultAttribute("/element/example/rest/api")
     public static final String RS_ROOT = "dev.getelements.elements.element.rs.root";
 
     @ElementDefaultAttribute("/element/example/ws")
     public static final String WS_ROOT = "dev.getelements.elements.element.ws.root";
+
+    @ElementDefaultAttribute("/app/static/test/path")
+    public static final String STATIC_CONTENT_URI = "dev.getelements.element.static.uri";
+
+    @ElementDefaultAttribute("/app/ui/test/path")
+    public static final String UI_CONTENT_URI = "dev.getelements.element.ui.uri";
 
     public static final String OPENAPI_TAG = "Example";
 
