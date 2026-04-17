@@ -285,6 +285,34 @@ http://localhost:8080/api/rest/openapi.json
 
 > **Note:** If this URL returns 404 or is unreachable, the local Elements instance is not running. Run the debug script first (`mvn -pl debug exec:java`) to bring the instance online, then retry.
 
+## Namazu Elements Core REST API (Source Reference)
+
+When building an Element, browse `dev.getelements.elements.rest` and its subpackages to discover available platform services, request/response shapes, and auth patterns. Source is in the local Maven repository under `~/.m2/repository/dev/getelements/elements/`.
+
+Key subpackages and their domains:
+
+| Subpackage | Domain |
+|---|------|
+| `dev.getelements.elements.rest.user` | User CRUD, password management |
+| `dev.getelements.elements.rest.security` | Sessions, username/password auth |
+| `dev.getelements.elements.rest.auth` | OAuth2, OIDC, custom auth schemes |
+| `dev.getelements.elements.rest.profile` | User profiles |
+| `dev.getelements.elements.rest.leaderboard` | Leaderboards, ranks, scores |
+| `dev.getelements.elements.rest.mission` | Missions, progress, rewards, schedules |
+| `dev.getelements.elements.rest.inventory` | Simple, advanced, and distinct inventory |
+| `dev.getelements.elements.rest.goods` | Shop items |
+| `dev.getelements.elements.rest.savedata` | Player save data |
+| `dev.getelements.elements.rest.largeobject` | File/blob uploads |
+| `dev.getelements.elements.rest.matchmaking` | Match management |
+| `dev.getelements.elements.rest.friends` | Friends and followers |
+| `dev.getelements.elements.rest.metadata` | Generic metadata and schemas |
+| `dev.getelements.elements.rest.blockchain` | Wallets, vaults, smart contracts |
+| `dev.getelements.elements.rest.notifications` | Push notification registration |
+| `dev.getelements.elements.rest.element` | Element deployment and status |
+| `dev.getelements.elements.rest.application` | Application and platform config |
+
+Resource classes in these packages use setter-based `@Inject` (Jersey instantiates them, Guice bridges in). Study them to understand available services and how to call them from your own Element code.
+
 ## Package Layout Convention
 ```
 com.mystudio.mygame/
