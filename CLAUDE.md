@@ -78,6 +78,16 @@ Combined with Guice `expose()`, other Elements can call `serviceLocator.getInsta
 - Enable auth filter: `@ElementDefaultAttribute("true")` for `dev.getelements.elements.auth.enabled`
 - Mark authenticated endpoints: `@SecurityRequirement(name = AuthSchemes.SESSION_SECRET)`
 - Check user level: `User.Level.UNPRIVILEGED` is the sentinel for unauthenticated/guest
+- **SUPERUSER check**: Do not use `SecurityContext.isUserInRole()` — it does not work in the Elements context. Resolve `UserService` from the service locator and check `user.level`:
+
+  ```kotlin
+  val locator = ElementSupplier.getElementLocal(MyResource::class.java).get().serviceLocator
+  val user = locator.findInstance(UserService::class.java)
+      .map { it.get().currentUser }.orElse(null)
+      ?: return Response.status(Response.Status.FORBIDDEN).build()
+  if (user.level != User.Level.SUPERUSER)
+      return Response.status(Response.Status.FORBIDDEN).build()
+  ```
 
 ### WebSocket
 - Annotate class with `@ServerEndpoint("/path")` — auto-discovered
@@ -167,6 +177,24 @@ The bundle must be an IIFE that registers a React component with the dashboard's
 ```
 
 Tailwind utility classes work out of the box — the dashboard stylesheet is already loaded.
+
+### Authenticated API calls from a plugin
+
+When your plugin bundle fetches your Element's REST endpoint, the session token must be passed explicitly — cookies alone are not reliable in all dashboard contexts. Use `window.__elementsApiClient.getSessionToken()` and send it as the `Elements-SessionSecret` header:
+
+```js
+function authHeaders() {
+  var token = window.__elementsApiClient && window.__elementsApiClient.getSessionToken();
+  return token ? { 'Elements-SessionSecret': token } : {};
+}
+
+fetch('/my-element/my-endpoint', {
+  credentials: 'include',
+  headers: authHeaders()
+});
+```
+
+`window.__elementsApiClient` is set by the dashboard before any plugin loads. `getSessionToken()` returns the current session secret string, or `null` if the user is not logged in.
 
 ### Developing the UI (`ui/` module)
 
@@ -322,3 +350,23 @@ com.mystudio.mygame/
   ├── guice/          Guice modules
   └── package-info.java
 ```
+
+## Cross-Element Service Access
+
+An Element can discover and call services exported by other deployed Elements at runtime using the `ElementRegistry`. This is useful for building admin or aggregator elements that need to query all providers of a given service.
+
+```kotlin
+val registry = ElementSupplier.getElementLocal(MyResource::class.java).get().elementRegistry
+val results = registry.stream().toList().mapNotNull { el ->
+    el.serviceLocator.findInstance(MyService::class.java)
+        .map { supplier ->
+            try { supplier.get().doSomething() }
+            catch (e: Exception) { /* handle per-element failure */ null }
+        }
+        .orElse(null)
+}
+```
+
+- `registry.stream()` enumerates every Element currently deployed in the runtime, including the calling Element itself.
+- `findInstance` returns `Optional<Supplier<T>>`. An empty Optional means that Element does not export `MyService`.
+- The service is accessed by its interface type — both Elements must share the same `api` JAR (use the classified `api` artifact) on the classpath.
