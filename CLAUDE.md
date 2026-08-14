@@ -80,6 +80,8 @@ Combined with Guice `expose()`, other Elements can call `serviceLocator.getInsta
 - Check user level: `User.Level.UNPRIVILEGED` is the sentinel for unauthenticated/guest
 - **SUPERUSER check**: Do not use `SecurityContext.isUserInRole()` — it does not work in the Elements context. Resolve `UserService` from the service locator and check `user.level`:
 
+  > This is general SDK guidance. This repository's own code only checks for `User.Level.UNPRIVILEGED` (guest vs. logged-in) in `GreetingServiceImpl` — no `SUPERUSER` check is demonstrated here.
+
   ```kotlin
   val locator = ElementSupplier.getElementLocal(MyResource::class.java).get().serviceLocator
   val user = locator.findInstance(UserService::class.java)
@@ -90,6 +92,8 @@ Combined with Guice `expose()`, other Elements can call `serviceLocator.getInsta
   ```
 
 ### WebSocket
+> This section is general SDK guidance. No `@ServerEndpoint` class exists anywhere in this repository — `HelloWorldApplication.WS_ROOT` declares a WebSocket base path attribute, but nothing is mounted under it.
+
 - Annotate class with `@ServerEndpoint("/path")` — auto-discovered
 - Use `@OnOpen`, `@OnMessage`, `@OnClose`, `@OnError`
 - Get services via `ElementSupplier.getElementLocal()` (same as REST)
@@ -181,6 +185,8 @@ Tailwind utility classes work out of the box — the dashboard stylesheet is alr
 ### Authenticated API calls from a plugin
 
 When your plugin bundle fetches your Element's REST endpoint, the session token must be passed explicitly — cookies alone are not reliable in all dashboard contexts. Use `window.__elementsApiClient.getSessionToken()` and send it as the `Elements-SessionSecret` header:
+
+> This is general SDK guidance. This repository's own `ExamplePlugin.tsx` (superuser segment) only calls the unauthenticated `/api/rest/version` platform endpoint and does not exercise `window.__elementsApiClient` or this header — there is no working reference implementation of this pattern in this repo to copy from.
 
 ```js
 function authHeaders() {
@@ -354,6 +360,8 @@ com.mystudio.mygame/
 ## Cross-Element Service Access
 
 An Element can discover and call services exported by other deployed Elements at runtime using the `ElementRegistry`. This is useful for building admin or aggregator elements that need to query all providers of a given service.
+
+> This is general SDK guidance. This repository does not use `ElementRegistry` anywhere — `GreetingService` is only ever resolved locally via `element.getServiceLocator()`.
 
 ```kotlin
 val registry = ElementSupplier.getElementLocal(MyResource::class.java).get().elementRegistry
