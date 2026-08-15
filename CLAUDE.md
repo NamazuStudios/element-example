@@ -2,6 +2,8 @@
 
 This is a reference/example project for **Namazu Elements 3.8**, demonstrating how to build a custom Element using the multi-module Maven structure, REST endpoints, Guice DI, and the `.elm` archive format.
 
+> For the full Elements manual, see [NamazuStudios/element-example on GitHub](https://github.com/NamazuStudios/element-example).
+
 ## Project Structure
 
 ```
